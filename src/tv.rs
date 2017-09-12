@@ -6,13 +6,13 @@ type BeebUrl<'a> = &'a str;
 type TestBeebUrl = &'static str;
 
 pub struct Programme<'a> {
-    pub title: &'astr,
-    pub subtitle: &'str,
-    pub synopsis: &'str,
-    pub pid: &'str,
-    pub thumbnail: &'str,
-    pub url: &'str,
-    pub index: u16,
+    pub title: &'a str,
+    pub subtitle: &'a str,
+    pub synopsis: &'a str,
+    pub pid: &'a str,
+    pub thumbnail: &'a str,
+    pub url: &'a str,
+    pub index: &'a u16,
 }
 
 pub struct IplayerDocument {

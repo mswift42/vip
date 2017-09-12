@@ -8,8 +8,10 @@ fn main() {
     for node in pop.find(Class("list-item-inner")) {
         let title = find_title(&node);
         let sub_title = find_subtitle(&node);
+        let url = find_url(&node);
         println!("{}", title);
         println!("{:?}", sub_title);
+        println!("{}", url);
     }
 }
 
@@ -22,10 +24,18 @@ fn find_title(node: &Node) -> String {
 }
 
 fn find_subtitle(node: &Node) -> Option<String> {
-    let sub = node.find(Class("secondary").descendant(Class("subtitle")))
+    let sub = node.find(Class("secondary")
+        .descendant(Class("subtitle")))
         .next();
     match sub {
         None => None,
         Some(text) => Some(text.text()),
     }
+}
+
+fn find_url(node: &Node) -> String {
+    let path = node.find(Name("a")).next().unwrap().attr("href")
+        .unwrap().to_string();
+    let url = String::from("www.bbc.co.uk");
+    url + &path
 }

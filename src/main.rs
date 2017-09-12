@@ -49,13 +49,12 @@ fn find_url(node: &Node) -> String {
     url + &path
 }
 
-fn find_thumbnail(node: &Node) -> String {
+fn find_thumbnail<'a>(node: &'a Node) -> &'a str {
     node.find(Class("rs-image").descendant(Name("picture").descendant(Name("source"))))
         .next()
         .unwrap()
         .attr("srcset")
         .unwrap()
-        .to_string()
 }
 
 fn find_pid(node: &Node) -> String {

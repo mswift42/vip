@@ -9,9 +9,11 @@ fn main() {
         let title = find_title(&node);
         let sub_title = find_subtitle(&node);
         let url = find_url(&node);
+        let thumbnail = find_thumbnail(&node);
         println!("{}", title);
         println!("{:?}", sub_title);
         println!("{}", url);
+        println!("{}", thumbnail);
     }
 }
 
@@ -24,8 +26,7 @@ fn find_title(node: &Node) -> String {
 }
 
 fn find_subtitle(node: &Node) -> Option<String> {
-    let sub = node.find(Class("secondary")
-        .descendant(Class("subtitle")))
+    let sub = node.find(Class("secondary").descendant(Class("subtitle")))
         .next();
     match sub {
         None => None,
@@ -34,8 +35,21 @@ fn find_subtitle(node: &Node) -> Option<String> {
 }
 
 fn find_url(node: &Node) -> String {
-    let path = node.find(Name("a")).next().unwrap().attr("href")
-        .unwrap().to_string();
+    let path = node.find(Name("a"))
+        .next()
+        .unwrap()
+        .attr("href")
+        .unwrap()
+        .to_string();
     let url = String::from("www.bbc.co.uk");
     url + &path
+}
+
+fn find_thumbnail(node: &Node) -> String {
+    node.find(Class("rs-image").descendant(Name("picture").descendant(Name("source"))))
+        .next()
+        .unwrap()
+        .attr("srcset")
+        .unwrap()
+        .to_string()
 }

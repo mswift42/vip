@@ -10,10 +10,12 @@ fn main() {
         let sub_title = find_subtitle(&node);
         let url = find_url(&node);
         let thumbnail = find_thumbnail(&node);
+        let pid = find_pid(&node);
         println!("{}", title);
         println!("{:?}", sub_title);
         println!("{}", url);
         println!("{}", thumbnail);
+        println!("{}", pid);
     }
 }
 
@@ -52,4 +54,18 @@ fn find_thumbnail(node: &Node) -> String {
         .attr("srcset")
         .unwrap()
         .to_string()
+}
+
+fn find_pid(node: &Node) -> String {
+    match node.attr("data-ip-id") {
+        None => {
+            node.find(Class("list-item-inner").descendant(Name("a")))
+                .next()
+                .unwrap()
+                .attr("data-episode-id")
+                .unwrap()
+                .to_string()
+        }
+        Some(pid) => pid.to_string(),
+    }
 }

@@ -11,11 +11,13 @@ fn main() {
         let url = find_url(&node);
         let thumbnail = find_thumbnail(&node);
         let pid = find_pid(&node);
+        let synopsis = find_synopsis(&node);
         println!("{}", title);
         println!("{:?}", sub_title);
         println!("{}", url);
         println!("{}", thumbnail);
         println!("{}", pid);
+        println!("{}", synopsis);
     }
 }
 
@@ -68,4 +70,8 @@ fn find_pid(node: &Node) -> String {
         }
         Some(pid) => pid.to_string(),
     }
+}
+
+fn find_synopsis(node: &Node) -> String {
+    node.find(Class("synopsis")).next().unwrap().text()
 }

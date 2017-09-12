@@ -7,7 +7,9 @@ fn main() {
     let pop = Document::from(include_str!("pop.html"));
     for node in pop.find(Class("list-item-inner")) {
         let title = find_title(&node);
-        println!("{}", title)
+        let sub_title = find_subtitle(&node);
+        println!("{}", title);
+        println!("{:?}", sub_title);
     }
 }
 
@@ -17,4 +19,13 @@ fn find_title(node: &Node) -> String {
         .next()
         .unwrap()
         .text()
+}
+
+fn find_subtitle(node: &Node) -> Option<String> {
+    let sub = node.find(Class("secondary").descendant(Class("subtitle")))
+        .next();
+    match sub {
+        None => None,
+        Some(text) => Some(text.text()),
+    }
 }

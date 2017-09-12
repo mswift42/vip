@@ -12,7 +12,23 @@ pub struct Programme<'a> {
     pub pid: &'a str,
     pub thumbnail: &'a str,
     pub url: &'a str,
-    pub index: &'a u16,
+    pub index: u16,
+}
+
+impl<'a> Programme<'a> {
+    fn new(title: &'a str, subtitle: &'a str,
+    synopsis: &'a str, pid: &'a str, thumbnail: &'a str,
+    url: &'a str, index: u16) -> Programme<'a> {
+        Programme {
+            title,
+            subtitle,
+            synopsis,
+            pid,
+            thumbnail,
+            url,
+            index,
+        }
+    }
 }
 
 pub struct IplayerDocument {

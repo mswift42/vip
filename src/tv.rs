@@ -7,6 +7,11 @@ type BeebUrl<'a> = &'a str;
 
 type TestBeebUrl = &'static str;
 
+pub struct Category {
+    name: string,
+    programmes: Vec<&programme>
+}
+
 #[derive(Debug)]
 pub struct Programme {
     pub title: String,

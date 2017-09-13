@@ -17,10 +17,10 @@ pub struct Programme {
     pub index: u16,
 }
 
-impl<'a> Programme<'a> {
-    fn new(title: String, subtitle: &'a str,
-    synopsis: &'a str, pid: &'a str, thumbnail: &'a str,
-    url: &'a str, index: u16) -> Programme<'a> {
+impl Programme {
+    fn new(title: String, subtitle: String,
+    synopsis: String, pid: String, thumbnail: String,
+    url: String, index: u16) -> Programme {
         Programme {
             title,
             subtitle,
@@ -45,17 +45,17 @@ impl IplayerDocument {
         }
     }
 
-    fn programmes<'a>(&'a self) -> Vec<&'a Programme> {
-        let mut results: Vec<&Programme> = Vec::new();
+    fn programmes(self) -> Vec<Programme> {
+        let mut results: Vec<Programme> = Vec::new();
         for node in self.idoc.find(Class("list-item-inner")) {
             let title = find_title(&node);
-            let subtitle = &find_subtitle(&node).unwrap();
-            let synopsis = &find_synopsis(&node);
-            let pid = &find_pid(&node);
-            let thumbnail = &find_thumbnail(&node);
-            let url = &find_url(&node);
+            let subtitle = find_subtitle(&node).unwrap();
+            let synopsis = find_synopsis(&node);
+            let pid = find_pid(&node);
+            let thumbnail = find_thumbnail(&node).to_string();
+            let url = find_url(&node);
             let index = 0;
-            let prog = &Programme::new(title,
+            let prog = Programme::new(title,
             subtitle, synopsis, pid, thumbnail, url, index);
             results.push(prog);
         }

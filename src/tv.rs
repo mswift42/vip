@@ -7,9 +7,9 @@ type BeebUrl<'a> = &'a str;
 
 type TestBeebUrl = &'static str;
 
-pub struct Category {
-    name: string,
-    programmes: Vec<&programme>
+pub struct Category<'a> {
+    name: String,
+    programmes: Vec<&'a Programme>
 }
 
 #[derive(Debug)]

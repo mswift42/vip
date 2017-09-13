@@ -7,6 +7,7 @@ type BeebUrl<'a> = &'a str;
 
 type TestBeebUrl = &'static str;
 
+#[derive(Debug)]
 pub struct Programme {
     pub title: String,
     pub subtitle: String,
@@ -16,7 +17,6 @@ pub struct Programme {
     pub url: String,
     pub index: u16,
 }
-
 impl Programme {
     fn new(title: String, subtitle: String,
     synopsis: String, pid: String, thumbnail: String,
@@ -32,24 +32,29 @@ impl Programme {
         }
     }
 }
-
+#[derive(Clone, Debug)]
 pub struct IplayerDocument {
     pub idoc: Document,
 }
 
 impl IplayerDocument {
-    fn new(bu: TestBeebUrl) -> IplayerDocument {
+    pub fn new(bu: TestBeebUrl) -> IplayerDocument {
         let idoc = Document::from(bu);
         IplayerDocument{
             idoc
         }
     }
 
-    fn programmes(self) -> Vec<Programme> {
+    pub fn programmes(self) -> Vec<Programme> {
         let mut results: Vec<Programme> = Vec::new();
         for node in self.idoc.find(Class("list-item-inner")) {
             let title = find_title(&node);
-            let subtitle = find_subtitle(&node).unwrap();
+            let subtitle = {
+                match find_subtitle(&node) {
+                    None => "".to_string(),
+                    Some(sub) => sub.to_string(),
+                }
+            };
             let synopsis = find_synopsis(&node);
             let pid = find_pid(&node);
             let thumbnail = find_thumbnail(&node).to_string();

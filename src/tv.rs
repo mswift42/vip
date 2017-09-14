@@ -165,5 +165,8 @@ mod test {
         assert_eq!(
             progr[0].pid, "b0959ppk"
         );
+        assert_eq!(
+            progr[0].url, "www.bbc.co.uk/iplayer/episode/b0959ppk/strike-the-silkworm-episode-1"
+        );
     }
 }

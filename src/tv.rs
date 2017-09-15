@@ -144,7 +144,7 @@ mod test {
 
     #[test]
     fn test_document() {
-        let doc = IplayerDocument::new(include_str!("pop.html"));
+        let doc = IplayerDocument::new(include_str!("../testhtml/pop.html"));
         assert_eq!(
             doc.idoc.find(Name("h1")).next().unwrap().text(),
             "Most Popular"
@@ -154,7 +154,7 @@ mod test {
     }
     #[test]
     fn test_programmes() {
-        let doc = IplayerDocument::new(include_str!("pop.html"));
+        let doc = IplayerDocument::new(include_str!("../testhtml/pop.html"));
         let progr = doc.programmes();
         assert_eq!(
             progr[0].title, "Strike"
@@ -171,7 +171,7 @@ mod test {
     }
     #[test]
     fn test_find_title() {
-    let doc = IplayerDocument::new(include_str!("pop.html"));
+    let doc = IplayerDocument::new(include_str!("../testhtml/pop.html"));
       let prog = doc.programmes();
         assert_eq!(
             prog[0].title, "Strike"

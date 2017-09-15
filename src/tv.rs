@@ -169,4 +169,15 @@ mod test {
             progr[0].url, "www.bbc.co.uk/iplayer/episode/b0959ppk/strike-the-silkworm-episode-1"
         );
     }
+    #[test]
+    fn test_find_title() {
+    let doc = IplayerDocument::new(include_str!("pop.html"));
+      let prog = doc.programmes();
+        assert_eq!(
+            prog[0].title, "Strike"
+        );
+        assert_eq!(prog[1].title, "Doctor Foster");
+        assert_eq!(prog[2].title, "Strictly Come Dancing");
+
+    }
 }

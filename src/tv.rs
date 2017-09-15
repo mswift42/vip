@@ -149,40 +149,41 @@ mod test {
             doc.idoc.find(Name("h1")).next().unwrap().text(),
             "Most Popular"
         );
-        assert_eq!(doc.idoc.find(Class("subtitle")).next().unwrap().text(),
-        "Today's most popular programmes available on BBC iPlayer.");
+        assert_eq!(
+            doc.idoc.find(Class("subtitle")).next().unwrap().text(),
+            "Today's most popular programmes available on BBC iPlayer."
+        );
     }
     #[test]
     fn test_programmes() {
         let doc = IplayerDocument::new(include_str!("../testhtml/pop.html"));
         let progr = doc.programmes();
+        assert_eq!(progr[0].title, "Strike");
+        assert_eq!(progr[0].subtitle, "The Silkworm: Episode 1");
+        assert_eq!(progr[0].pid, "b0959ppk");
         assert_eq!(
-            progr[0].title, "Strike"
-        );
-        assert_eq!(
-            progr[0].subtitle, "The Silkworm: Episode 1"
-        );
-        assert_eq!(
-            progr[0].pid, "b0959ppk"
-        );
-        assert_eq!(
-            progr[0].url, "www.bbc.co.uk/iplayer/episode/b0959ppk/strike-the-silkworm-episode-1"
+            progr[0].url,
+            "www.bbc.co.uk/iplayer/episode/b0959ppk/strike-the-silkworm-episode-1"
         );
     }
     #[test]
     fn test_find_title() {
-    let doc = IplayerDocument::new(include_str!("../testhtml/pop.html"));
-      let prog = doc.programmes();
-        assert_eq!(
-            prog[0].title, "Strike"
-        );
+        let doc = IplayerDocument::new(include_str!("../testhtml/pop.html"));
+        let prog = doc.programmes();
+        assert_eq!(prog[0].title, "Strike");
         assert_eq!(prog[1].title, "Doctor Foster");
         assert_eq!(prog[2].title, "Strictly Come Dancing");
-    let doc = IplayerDocument::new(include_str!("../testhtml/films1.html"));
+        let doc = IplayerDocument::new(include_str!("../testhtml/films1.html"));
         let prog = doc.programmes();
         assert_eq!(prog[0].title, "Adam Curtis");
         assert_eq!(prog[1].title, "Broken");
         assert_eq!(prog[2].title, "Echoes from the Dead");
         assert_eq!(prog[3].title, "Emma");
+        let doc = IplayerDocument::new(include_str!("../testhtml/comedy1.html"));
+        let prog = doc.programmes();
+        assert_eq!(prog[0].title, "Asian Network Comedy");
+        assert_eq!(prog[1].title, "Bad Education");
+        assert_eq!(prog[2].title, "BBC New Comedy Award");
+        assert_eq!(prog[3].title, "Being Human");
     }
 }

@@ -178,6 +178,11 @@ mod test {
         );
         assert_eq!(prog[1].title, "Doctor Foster");
         assert_eq!(prog[2].title, "Strictly Come Dancing");
-
+    let doc = IplayerDocument::new(include_str!("../testhtml/films1.html"));
+        let prog = doc.programmes();
+        assert_eq!(prog[0].title, "Adam Curtis");
+        assert_eq!(prog[1].title, "Broken");
+        assert_eq!(prog[2].title, "Echoes from the Dead");
+        assert_eq!(prog[3].title, "Emma");
     }
 }

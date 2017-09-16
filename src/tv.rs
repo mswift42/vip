@@ -188,7 +188,7 @@ mod test {
     }
 
     #[test]
-    fn test_subtitle() {
+    fn test_find_subtitle() {
         let doc = IplayerDocument::new(include_str!("../testhtml/pop.html"));
         let prog = doc.programmes();
         assert_eq!(prog[0].subtitle, "The Silkworm: Episode 1");
@@ -207,5 +207,19 @@ mod test {
         assert_eq!(prog[0].subtitle, "Live in Edinburgh 2017");
         assert_eq!(prog[1].subtitle, "Series 3: 6. The Finale");
         assert_eq!(prog[2].subtitle, "2017: Live from Edinburgh");
+    }
+
+    #[test]
+    fn test_find_pid() {
+        let doc = IplayerDocument::new(include_str!("../testhtml/pop.html"));
+        let prog = doc.programmes();
+        assert_eq!(prog[0].pid, "b0959ppk");
+        assert_eq!(prog[1].pid, "b094m49d");
+        assert_eq!(prog[2].pid, "b0957wrf");
+        assert_eq!(prog[3].pid, "b0956h5y");
+
+        let doc = IplayerDocument::new(include_str!("../testhtml/films1.html"));
+        let prog = doc.programmes();
+        assert_eq!(prog[0].pid, "b09");
     }
 }

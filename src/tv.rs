@@ -108,7 +108,7 @@ fn find_url(node: &Node) -> String {
     if path.starts_with("http://www.bbc.co.uk") {
         return path
     } else {
-        let url = String::from("www.bbc.co.uk");
+        let url = String::from("http://www.bbc.co.uk");
         return url + &path
     }
 }
@@ -167,7 +167,7 @@ mod test {
         assert_eq!(progr[0].pid, "b0959ppk");
         assert_eq!(
             progr[0].url,
-            "www.bbc.co.uk/iplayer/episode/b0959ppk/strike-the-silkworm-episode-1"
+            "http://www.bbc.co.uk/iplayer/episode/b0959ppk/strike-the-silkworm-episode-1"
         );
     }
     #[test]
@@ -253,10 +253,10 @@ mod test {
     fn test_find_url() {
         let doc = IplayerDocument::new(include_str!("../testhtml/pop.html"));
         let prog = doc.programmes();
-        assert_eq!(prog[0].url, "www.bbc.co.uk/iplayer/episode/b0959ppk/strike-the-silkworm-episode-1");
-        assert_eq!(prog[1].url, "www.bbc.co.uk/iplayer/episode/b094m49d/doctor-foster-series-2-episode-1");
-        assert_eq!(prog[2].url, "www.bbc.co.uk/iplayer/episode/b0957wrf/strictly-come-dancing-series-15-1-launch");
-        assert_eq!(prog[3].url, "www.bbc.co.uk/iplayer/episode/b0956h5y/dragons-den-series-15-episode-4");
+        assert_eq!(prog[0].url, "http://www.bbc.co.uk/iplayer/episode/b0959ppk/strike-the-silkworm-episode-1");
+        assert_eq!(prog[1].url, "http://www.bbc.co.uk/iplayer/episode/b094m49d/doctor-foster-series-2-episode-1");
+        assert_eq!(prog[2].url, "http://www.bbc.co.uk/iplayer/episode/b0957wrf/strictly-come-dancing-series-15-1-launch");
+        assert_eq!(prog[3].url, "http://www.bbc.co.uk/iplayer/episode/b0956h5y/dragons-den-series-15-episode-4");
 
         let doc = IplayerDocument::new(include_str!("../testhtml/films1.html"));
         let prog = doc.programmes();

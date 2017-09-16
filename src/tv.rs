@@ -105,8 +105,12 @@ fn find_url(node: &Node) -> String {
         .attr("href")
         .unwrap()
         .to_string();
-    let url = String::from("www.bbc.co.uk");
-    url + &path
+    if path.starts_with("http://www.bbc.co.uk") {
+        return path
+    } else {
+        let url = String::from("www.bbc.co.uk");
+        return url + &path
+    }
 }
 
 fn find_thumbnail<'a>(node: &'a Node) -> &'a str {
@@ -244,5 +248,18 @@ mod test {
         assert_eq!(prog[1].thumbnail, "https://ichef.bbci.co.uk/images/ic/336x189/p028nmdv.jpg");
         assert_eq!(prog[2].thumbnail, "https://ichef.bbci.co.uk/images/ic/336x189/p05ccy3l.jpg");
         assert_eq!(prog[3].thumbnail, "https://ichef.bbci.co.uk/images/ic/336x189/p01j34d4.jpg");
+    }
+    #[test]
+    fn test_find_url() {
+        let doc = IplayerDocument::new(include_str!("../testhtml/pop.html"));
+        let prog = doc.programmes();
+        assert_eq!(prog[0].url, "www.bbc.co.uk/iplayer/episode/b0959ppk/strike-the-silkworm-episode-1");
+        assert_eq!(prog[1].url, "www.bbc.co.uk/iplayer/episode/b094m49d/doctor-foster-series-2-episode-1");
+        assert_eq!(prog[2].url, "www.bbc.co.uk/iplayer/episode/b0957wrf/strictly-come-dancing-series-15-1-launch");
+        assert_eq!(prog[3].url, "www.bbc.co.uk/iplayer/episode/b0956h5y/dragons-den-series-15-episode-4");
+
+        let doc = IplayerDocument::new(include_str!("../testhtml/films1.html"));
+        let prog = doc.programmes();
+        assert_eq!(prog[1].url, "http://www.bbc.co.uk/iplayer/episode/b03bm29q/broken");
     }
 }

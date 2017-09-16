@@ -21,7 +21,7 @@ impl<'a> Category<'a> {
 #[derive(Debug)]
 pub struct Programme {
     pub title: String,
-    pub subtitle: String,
+    pub subtitle: Option<String>,
     pub synopsis: String,
     pub pid: String,
     pub thumbnail: String,
@@ -31,7 +31,7 @@ pub struct Programme {
 impl Programme {
     fn new(
         title: String,
-        subtitle: String,
+        subtitle: Option<String>,
         synopsis: String,
         pid: String,
         thumbnail: String,
@@ -64,12 +64,7 @@ impl IplayerDocument {
         let mut results: Vec<Programme> = Vec::new();
         for node in self.idoc.find(Class("list-item-inner")) {
             let title = find_title(&node);
-            let subtitle = {
-                match find_subtitle(&node) {
-                    None => "".to_string(),
-                    Some(sub) => sub.to_string(),
-                }
-            };
+            let subtitle = find_subtitle(&node);
             let synopsis = find_synopsis(&node);
             let pid = find_pid(&node);
             let thumbnail = find_thumbnail(&node).to_string();
@@ -163,7 +158,7 @@ mod test {
         let doc = IplayerDocument::new(include_str!("../testhtml/pop.html"));
         let progr = doc.programmes();
         assert_eq!(progr[0].title, "Strike");
-        assert_eq!(progr[0].subtitle, "The Silkworm: Episode 1");
+        assert_eq!(progr[0].subtitle, Some("The Silkworm: Episode 1".to_string()));
         assert_eq!(progr[0].pid, "b0959ppk");
         assert_eq!(
             progr[0].url,
@@ -195,22 +190,23 @@ mod test {
     fn test_find_subtitle() {
         let doc = IplayerDocument::new(include_str!("../testhtml/pop.html"));
         let prog = doc.programmes();
-        assert_eq!(prog[0].subtitle, "The Silkworm: Episode 1");
-        assert_eq!(prog[1].subtitle, "Series 2: Episode 1");
-        assert_eq!(prog[2].subtitle, "Series 15: 1. Launch");
-        assert_eq!(prog[39].subtitle, "04/09/2017");
+        assert_eq!(prog[0].subtitle, Some("The Silkworm: Episode 1".to_string()));
+        assert_eq!(prog[1].subtitle, Some("Series 2: Episode 1".to_string()));
+        assert_eq!(prog[2].subtitle, Some("Series 15: 1. Launch".to_string()));
+        assert_eq!(prog[39].subtitle, Some("04/09/2017".to_string()));
+
 
         let doc = IplayerDocument::new(include_str!("../testhtml/films1.html"));
         let prog = doc.programmes();
-        assert_eq!(prog[0].subtitle, "HyperNormalisation");
-        assert_eq!(prog[1].subtitle, "");
-        assert_eq!(prog[2].subtitle, "");
+        assert_eq!(prog[0].subtitle, Some("HyperNormalisation".to_string()));
+        assert_eq!(prog[1].subtitle, None);
+        assert_eq!(prog[2].subtitle, None);
 
         let doc = IplayerDocument::new(include_str!("../testhtml/comedy1.html"));
         let prog = doc.programmes();
-        assert_eq!(prog[0].subtitle, "Live in Edinburgh 2017");
-        assert_eq!(prog[1].subtitle, "Series 3: 6. The Finale");
-        assert_eq!(prog[2].subtitle, "2017: Live from Edinburgh");
+        assert_eq!(prog[0].subtitle, Some("Live in Edinburgh 2017".to_string()));
+        assert_eq!(prog[1].subtitle, Some("Series 3: 6. The Finale".to_string()));
+        assert_eq!(prog[2].subtitle, Some("2017: Live from Edinburgh".to_string()));
     }
 
     #[test]

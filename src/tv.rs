@@ -261,5 +261,14 @@ mod test {
         let doc = IplayerDocument::new(include_str!("../testhtml/films1.html"));
         let prog = doc.programmes();
         assert_eq!(prog[1].url, "http://www.bbc.co.uk/iplayer/episode/b03bm29q/broken");
+        assert_eq!(prog[0].url, "http://www.bbc.co.uk/iplayer/episode/p04b183c/adam-curtis-hypernormalisation");
+        assert_eq!(prog[2].url, "http://www.bbc.co.uk/iplayer/episode/b04lp7xn/echoes-from-the-dead");
+
+        let doc = IplayerDocument::new(include_str!("../testhtml/comedy1.html"));
+        let prog = doc.programmes();
+        assert_eq!(prog[0].url, "http://www.bbc.co.uk/iplayer/episode/p05by123/asian-network-comedy-live-in-edinburgh-2017");
+        assert_eq!(prog[1].url, "http://www.bbc.co.uk/iplayer/episode/b04m9twt/bad-education-series-3-6-the-finale");
+        assert_eq!(prog[2].url, "http://www.bbc.co.uk/iplayer/episode/b0920yy0/bbc-new-comedy-award-2017-live-from-edinburgh");
+        assert_eq!(prog[3].url, "http://www.bbc.co.uk/iplayer/episode/b01r82f3/being-human-series-5-6-the-last-broadcast");
     }
 }

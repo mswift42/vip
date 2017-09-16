@@ -220,6 +220,29 @@ mod test {
 
         let doc = IplayerDocument::new(include_str!("../testhtml/films1.html"));
         let prog = doc.programmes();
-        assert_eq!(prog[0].pid, "b09");
+        assert_eq!(prog[0].pid, "");
+        assert_eq!(prog[1].pid, "");
+    }
+
+    #[test]
+    fn test_thumbnail() {
+        let doc = IplayerDocument::new(include_str!("../testhtml/pop.html"));
+        let prog = doc.programmes();
+        assert_eq!(prog[0].thumbnail, "https://ichef.bbci.co.uk/images/ic/336x189/p05f6rgl.jpg");
+        assert_eq!(prog[1].thumbnail, "https://ichef.bbci.co.uk/images/ic/336x189/p05fdxqf.jpg");
+        assert_eq!(prog[2].thumbnail, "https://ichef.bbci.co.uk/images/ic/336x189/p05fb1zb.jpg");
+
+        let doc = IplayerDocument::new(include_str!("../testhtml/films1.html"));
+        let prog = doc.programmes();
+        assert_eq!(prog[0].thumbnail, "https://ichef.bbci.co.uk/images/ic/336x189/p04c0tsb.jpg");
+        assert_eq!(prog[1].thumbnail, "https://ichef.bbci.co.uk/images/ic/336x189/p02j8jt8.jpg");
+        assert_eq!(prog[2].thumbnail, "https://ichef.bbci.co.uk/images/ic/336x189/p02t9h5f.jpg");
+
+        let doc = IplayerDocument::new(include_str!("../testhtml/comedy1.html"));
+        let prog = doc.programmes();
+        assert_eq!(prog[0].thumbnail, "https://ichef.bbci.co.uk/images/ic/336x189/p05cyq28.jpg");
+        assert_eq!(prog[1].thumbnail, "https://ichef.bbci.co.uk/images/ic/336x189/p028nmdv.jpg");
+        assert_eq!(prog[2].thumbnail, "https://ichef.bbci.co.uk/images/ic/336x189/p05ccy3l.jpg");
+        assert_eq!(prog[3].thumbnail, "https://ichef.bbci.co.uk/images/ic/336x189/p01j34d4.jpg");
     }
 }

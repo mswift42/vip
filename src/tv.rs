@@ -186,4 +186,26 @@ mod test {
         assert_eq!(prog[2].title, "BBC New Comedy Award");
         assert_eq!(prog[3].title, "Being Human");
     }
+
+    #[test]
+    fn test_subtitle() {
+        let doc = IplayerDocument::new(include_str!("../testhtml/pop.html"));
+        let prog = doc.programmes();
+        assert_eq!(prog[0].subtitle, "The Silkworm: Episode 1");
+        assert_eq!(prog[1].subtitle, "Series 2: Episode 1");
+        assert_eq!(prog[2].subtitle, "Series 15: 1. Launch");
+        assert_eq!(prog[39].subtitle, "04/09/2017");
+
+        let doc = IplayerDocument::new(include_str!("../testhtml/films1.html"));
+        let prog = doc.programmes();
+        assert_eq!(prog[0].subtitle, "HyperNormalisation");
+        assert_eq!(prog[1].subtitle, "");
+        assert_eq!(prog[2].subtitle, "");
+
+        let doc = IplayerDocument::new(include_str!("../testhtml/comedy1.html"));
+        let prog = doc.programmes();
+        assert_eq!(prog[0].subtitle, "Live in Edinburgh 2017");
+        assert_eq!(prog[1].subtitle, "Series 3: 6. The Finale");
+        assert_eq!(prog[2].subtitle, "2017: Live from Edinburgh");
+    }
 }

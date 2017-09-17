@@ -77,12 +77,14 @@ impl IplayerDocument {
     }
 
     fn sub_pages(self) -> Vec<String> {
-        self.idoc.find(Class("view-more-container")).next().iter()
-            .map(|node| -> String {
-                String::from("http://www.bbc.co.uk") +
-                    &node.attr("href").unwrap().to_string()})
-            .collect()
+        let mut results: Vec<String> = Vec::new();
+        for node in self.idoc.find(Class("view-more-container")) {
+            let sub = node.attr("href").unwrap().to_string();
+            results.push(String::from("http://www.bbc.co.uk") + &sub);
+        }
+        results
     }
+
 }
 
 fn find_title(node: &Node) -> String {
@@ -280,6 +282,12 @@ mod test {
         let doc = IplayerDocument::new(include_str!("../testhtml/films1.html"));
         let sub_pages = doc.sub_pages();
         assert_eq!(sub_pages[0], "http://www.bbc.co.uk/iplayer/episodes/p04bkttz");
+
+        let doc = IplayerDocument::new(include_str!("../testhtml/comedy1.html"));
+        let sub_pages = doc.sub_pages();
+        assert_eq!(sub_pages.len(), 10);
+        assert_eq!(sub_pages[0], "http://www.bbc.co.uk/iplayer/episodes/p01djw5m");
+        assert_eq!(sub_pages[1], "http://www.bbc.co.uk/iplayer/episodes/b00hqlc4");
     }
 
 }

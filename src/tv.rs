@@ -75,6 +75,11 @@ impl IplayerDocument {
         }
         results
     }
+
+    fn sub_pages(self) -> Vec<BeebUrl> {
+        self.idoc.find(Class("page").descendant(Name("a"))).next()
+            .unwrap().attr("href").unwrap().to_string()
+    }
 }
 
 fn find_title(node: &Node) -> String {
@@ -267,4 +272,6 @@ mod test {
         assert_eq!(prog[2].url, "http://www.bbc.co.uk/iplayer/episode/b0920yy0/bbc-new-comedy-award-2017-live-from-edinburgh");
         assert_eq!(prog[3].url, "http://www.bbc.co.uk/iplayer/episode/b01r82f3/being-human-series-5-6-the-last-broadcast");
     }
+
+
 }

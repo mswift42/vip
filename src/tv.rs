@@ -85,6 +85,12 @@ impl IplayerDocument {
         results
     }
 
+    fn next_page(self) -> String {
+        let path = self.idoc.find(Class("page").descendant(Name("a")))
+            .next().unwrap().attr("href").unwrap().to_string();
+        String::from("http://www.bbc.co.uk") + &path
+    }
+
 }
 
 fn find_title(node: &Node) -> String {
@@ -288,6 +294,13 @@ mod test {
         assert_eq!(sub_pages.len(), 10);
         assert_eq!(sub_pages[0], "http://www.bbc.co.uk/iplayer/episodes/p01djw5m");
         assert_eq!(sub_pages[1], "http://www.bbc.co.uk/iplayer/episodes/b00hqlc4");
+    }
+
+    #[test]
+    fn test_next_page() {
+        let doc = IplayerDocument::new(include_str!("../testhtml/comedy1.html"));
+        let next_page = doc.next_page();
+        assert_eq!(next_page, "http://www.bbc.co.uk/iplayer/categories/comedy/all?sort=atoz&page=2");
     }
 
 }

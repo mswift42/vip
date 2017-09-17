@@ -301,6 +301,9 @@ mod test {
         let doc = IplayerDocument::new(include_str!("../testhtml/comedy1.html"));
         let next_page = doc.next_page();
         assert_eq!(next_page, "http://www.bbc.co.uk/iplayer/categories/comedy/all?sort=atoz&page=2");
+        let doc = IplayerDocument::new(include_str!("../testhtml/films1.html"));
+        let next_page = doc.next_page();
+        assert_eq!(next_page, "http://www.bbc.co.uk/iplayer/categories/films/all?sort=atoz&page=2");
     }
 
 }

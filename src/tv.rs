@@ -76,9 +76,12 @@ impl IplayerDocument {
         results
     }
 
-    fn sub_pages(self) -> Vec<BeebUrl> {
-        self.idoc.find(Class("page").descendant(Name("a"))).next()
-            .unwrap().attr("href").unwrap().to_string()
+    fn sub_pages(self) -> Vec<String> {
+        self.idoc.find(Class("view-more-container")).next().iter()
+            .map(|node| -> String {
+                String::from("http://www.bbc.co.uk") +
+                    &node.attr("href").unwrap().to_string()})
+            .collect()
     }
 }
 
@@ -272,6 +275,11 @@ mod test {
         assert_eq!(prog[2].url, "http://www.bbc.co.uk/iplayer/episode/b0920yy0/bbc-new-comedy-award-2017-live-from-edinburgh");
         assert_eq!(prog[3].url, "http://www.bbc.co.uk/iplayer/episode/b01r82f3/being-human-series-5-6-the-last-broadcast");
     }
-
+    #[test]
+    fn test_sub_pages() {
+        let doc = IplayerDocument::new(include_str!("../testhtml/films1.html"));
+        let sub_pages = doc.sub_pages();
+        assert_eq!(sub_pages[0], "http://www.bbc.co.uk/iplayer/episodes/p04bkttz");
+    }
 
 }

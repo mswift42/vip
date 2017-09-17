@@ -62,6 +62,7 @@ impl IplayerDocument {
 
     pub fn programmes(self) -> Vec<Programme> {
         let mut results: Vec<Programme> = Vec::new();
+        let next_page = self.next_page().clone();
         for node in self.idoc.find(Class("list-item-inner")) {
             let title = find_title(&node);
             let subtitle = find_subtitle(&node);
@@ -85,10 +86,15 @@ impl IplayerDocument {
         results
     }
 
-    fn next_page(self) -> String {
+    fn next_page(self) -> Option<String> {
         let path = self.idoc.find(Class("page").descendant(Name("a")))
-            .next().unwrap().attr("href").unwrap().to_string();
-        String::from("http://www.bbc.co.uk") + &path
+            .next();
+           // .unwrap().attr("href").unwrap().to_string();
+        match path {
+            Some(node) => Some(String::from("http://www.bbc.co.uk") +
+                &node.attr("href").unwrap().to_string()),
+            None => None,
+        }
     }
 
 }
@@ -300,10 +306,12 @@ mod test {
     fn test_next_page() {
         let doc = IplayerDocument::new(include_str!("../testhtml/comedy1.html"));
         let next_page = doc.next_page();
-        assert_eq!(next_page, "http://www.bbc.co.uk/iplayer/categories/comedy/all?sort=atoz&page=2");
+        assert_eq!(next_page,
+                   Some("http://www.bbc.co.uk/iplayer/categories/comedy/all?sort=atoz&page=2".to_string()));
         let doc = IplayerDocument::new(include_str!("../testhtml/films1.html"));
         let next_page = doc.next_page();
-        assert_eq!(next_page, "http://www.bbc.co.uk/iplayer/categories/films/all?sort=atoz&page=2");
+        assert_eq!(next_page,
+                   Some("http://www.bbc.co.uk/iplayer/categories/films/all?sort=atoz&page=2".to_string()));
     }
 
 }

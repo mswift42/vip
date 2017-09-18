@@ -62,7 +62,6 @@ impl IplayerDocument {
 
     pub fn programmes(self) -> Vec<Programme> {
         let mut results: Vec<Programme> = Vec::new();
-        let next_page = self.next_page().clone();
         for node in self.idoc.find(Class("list-item-inner")) {
             let title = find_title(&node);
             let subtitle = find_subtitle(&node);
@@ -86,15 +85,13 @@ impl IplayerDocument {
         results
     }
 
-    fn next_page(self) -> Option<String> {
-        let path = self.idoc.find(Class("page").descendant(Name("a")))
-            .next();
-           // .unwrap().attr("href").unwrap().to_string();
-        match path {
-            Some(node) => Some(String::from("http://www.bbc.co.uk") +
-                &node.attr("href").unwrap().to_string()),
-            None => None,
+    fn next_pages(self) -> Vec<String> {
+        let mut results: Vec<String> = Vec::new();
+        for node in self.idoc.find(Class("page").descendant(Name("a"))) {
+            let nxt = node.attr("href").unwrap().to_string();
+            results.push(String::from("http://www.bbc.co.uk") + &nxt);
         }
+        results
     }
 
 }
@@ -305,13 +302,14 @@ mod test {
     #[test]
     fn test_next_page() {
         let doc = IplayerDocument::new(include_str!("../testhtml/comedy1.html"));
-        let next_page = doc.next_page();
-        assert_eq!(next_page,
-                   Some("http://www.bbc.co.uk/iplayer/categories/comedy/all?sort=atoz&page=2".to_string()));
+        let next_pages = doc.next_pages();
+        assert_eq!(next_pages[0],
+                   "http://www.bbc.co.uk/iplayer/categories/comedy/all?sort=atoz&page=2");
         let doc = IplayerDocument::new(include_str!("../testhtml/films1.html"));
-        let next_page = doc.next_page();
-        assert_eq!(next_page,
-                   Some("http://www.bbc.co.uk/iplayer/categories/films/all?sort=atoz&page=2".to_string()));
+        let next_pages = doc.next_pages();
+        assert_eq!(next_pages[0],
+                   "http://www.bbc.co.uk/iplayer/categories/films/all?sort=atoz&page=2");
+
     }
 
 }

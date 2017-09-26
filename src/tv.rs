@@ -28,7 +28,7 @@ pub struct Programme {
     pub url: String,
     pub index: u16,
 }
-impl Programme {
+impl<'a> Programme {
     fn new(
         title: String,
         subtitle: Option<String>,
@@ -37,16 +37,17 @@ impl Programme {
         thumbnail: String,
         url: String,
         index: u16,
-    ) -> Programme {
-        Programme {
-            title,
-            subtitle,
-            synopsis,
-            pid,
-            thumbnail,
-            url,
-            index,
-        }
+    ) -> Box<Programme> {
+        let prog = Programme {
+            title: title,
+            subtitle: subtitle,
+            synopsis: synopsis,
+            pid: pid,
+            thumbnail: thumbnail,
+            url: url,
+            index: index,
+        };
+        Box::new(prog)
     }
 }
 #[derive(Clone, Debug)]
@@ -54,14 +55,14 @@ pub struct IplayerDocument {
     pub idoc: Document,
 }
 
-impl IplayerDocument {
+impl<'a> IplayerDocument {
     pub fn new(bu: TestBeebUrl) -> IplayerDocument {
         let idoc = Document::from(bu);
         IplayerDocument { idoc }
     }
 
-    pub fn programmes(self) -> Vec<Programme> {
-        let mut results: Vec<Programme> = Vec::new();
+    pub fn programmes(self) -> Vec<Box<Programme>> {
+        let mut results: Vec<Box<Programme>> = Vec::new();
         for node in self.idoc.find(Class("list-item-inner")) {
             let title = find_title(&node);
             let subtitle = find_subtitle(&node);
@@ -153,12 +154,7 @@ fn find_synopsis(node: &Node) -> String {
 
 #[cfg(test)]
 mod test {
-    use super::Programme;
-    use super::Category;
-    use super::IplayerDocument;
-    use super::{Class, Name};
-    use super::Document;
-
+    use super::*;
     #[test]
     fn test_document() {
         let doc = IplayerDocument::new(include_str!("../testhtml/pop.html"));
@@ -364,7 +360,7 @@ mod test {
         // episode/b01r82f3/being-human-series-5-6-the-last-broadcast"
         //        );
     }
-    #[test]
+     #[test]
     fn test_sub_pages() {
         let doc = IplayerDocument::new(include_str!("../testhtml/films1.html"));
         let sub_pages = doc.sub_pages();

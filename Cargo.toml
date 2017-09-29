@@ -6,6 +6,7 @@ authors = ["mswift42 <martin.haesler@gmail.com>"]
 [dependencies]
 select = "0.4.2"
 clippy = {version = "*", optional = true}
+cpuprofiler = "0.0.2"
 
 [features]
 default = []

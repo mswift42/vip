@@ -29,27 +29,18 @@ pub struct Programme {
     pub index: u16,
 }
 impl<'a> Programme {
-    fn new(
-        title: String,
-        subtitle: Option<String>,
-        synopsis: String,
-        pid: String,
-        thumbnail: String,
-        url: String,
-        index: u16,
-    ) -> Box<Programme> {
-        let prog = Programme {
-            title: title,
-            subtitle: subtitle,
-            synopsis: synopsis,
-            pid: pid,
-            thumbnail: thumbnail,
-            url: url,
-            index: index,
-        };
-        Box::new(prog)
-    }
+   fn new(node: &Node) -> Programme {
+       let title = find_title(node);
+       let subtitle = find_subtitle(node);
+       let synopsis = find_synopsis(node);
+       let pid = find_pid(node);
+       let thumbnail = find_thumbnail(node).to_string();
+       let url = find_url(node);
+       let index = 0;
+       Programme { title, subtitle, synopsis, pid, thumbnail, url, index }
+   }
 }
+
 #[derive(Clone, Debug)]
 pub struct IplayerDocument {
     pub idoc: Document,
@@ -61,20 +52,10 @@ impl<'a> IplayerDocument {
         IplayerDocument { idoc }
     }
 
-    pub fn programmes(self) -> Vec<Box<Programme>> {
-        let mut results: Vec<Box<Programme>> = Vec::new();
-        for node in self.idoc.find(Class("list-item-inner")) {
-            let title = find_title(&node);
-            let subtitle = find_subtitle(&node);
-            let synopsis = find_synopsis(&node);
-            let pid = find_pid(&node);
-            let thumbnail = find_thumbnail(&node).to_string();
-            let url = find_url(&node);
-            let index = 0;
-            let prog = Programme::new(title, subtitle, synopsis, pid, thumbnail, url, index);
-            results.push(prog);
-        }
-        results
+    pub fn programmes(self) -> Vec<Programme> {
+//        for node in self.idoc.find(Class("list-item-inner")) {
+        self.idoc.find(Class("list-item-inner"))
+            .map(|node| Programme::new(&node)).collect()
     }
 
     fn sub_pages(self) -> Vec<String> {
@@ -128,9 +109,8 @@ fn find_url(node: &Node) -> String {
 }
 
 fn find_thumbnail<'a>(node: &'a Node) -> &'a str {
-    node.find(
-        Class("rs-image").descendant(Name("picture").descendant(Name("source"))),
-    ).next()
+    node.find(Class("rs-image").descendant(Name("picture").descendant(Name("source"))))
+        .next()
         .unwrap()
         .attr("srcset")
         .unwrap()
@@ -360,7 +340,7 @@ mod test {
         // episode/b01r82f3/being-human-series-5-6-the-last-broadcast"
         //        );
     }
-     #[test]
+    #[test]
     fn test_sub_pages() {
         let doc = IplayerDocument::new(include_str!("../testhtml/films1.html"));
         let sub_pages = doc.sub_pages();

@@ -18,6 +18,8 @@ impl<'a> Category<'a> {
     }
 }
 
+
+
 #[derive(Debug)]
 pub struct Programme {
     pub title: String,
@@ -29,16 +31,24 @@ pub struct Programme {
     pub index: u16,
 }
 impl<'a> Programme {
-   fn new(node: &Node) -> Programme {
-       let title = find_title(node);
-       let subtitle = find_subtitle(node);
-       let synopsis = find_synopsis(node);
-       let pid = find_pid(node);
-       let thumbnail = find_thumbnail(node).to_string();
-       let url = find_url(node);
-       let index = 0;
-       Programme { title, subtitle, synopsis, pid, thumbnail, url, index }
-   }
+    fn new(node: &Node) -> Programme {
+        let title = find_title(node);
+        let subtitle = find_subtitle(node);
+        let synopsis = find_synopsis(node);
+        let pid = find_pid(node);
+        let thumbnail = find_thumbnail(node).to_string();
+        let url = find_url(node);
+        let index = 0;
+        Programme {
+            title,
+            subtitle,
+            synopsis,
+            pid,
+            thumbnail,
+            url,
+            index,
+        }
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -52,13 +62,15 @@ impl<'a> IplayerDocument {
         IplayerDocument { idoc }
     }
 
-    pub fn programmes(self) -> Vec<Programme> {
-//        for node in self.idoc.find(Class("list-item-inner")) {
-        self.idoc.find(Class("list-item-inner"))
-            .map(|node| Programme::new(&node)).collect()
+    pub fn programmes(&self) -> Vec<Programme> {
+        //        for node in self.idoc.find(Class("list-item-inner")) {
+        self.idoc
+            .find(Class("list-item-inner"))
+            .map(|node| Programme::new(&node))
+            .collect()
     }
 
-    fn sub_pages(self) -> Vec<String> {
+    fn sub_pages(&self) -> Vec<String> {
         let mut results: Vec<String> = Vec::new();
         for node in self.idoc.find(Class("view-more-container")) {
             let sub = node.attr("href").unwrap().to_string();
@@ -67,7 +79,7 @@ impl<'a> IplayerDocument {
         results
     }
 
-    fn next_pages(self) -> Vec<String> {
+    fn next_pages(&self) -> Vec<String> {
         let mut results: Vec<String> = Vec::new();
         for node in self.idoc.find(Class("page").descendant(Name("a"))) {
             let nxt = node.attr("href").unwrap().to_string();

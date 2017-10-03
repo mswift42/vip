@@ -1,7 +1,9 @@
 extern crate select;
+extern crate reqwest;
 use select::document::Document;
 use select::node::Node;
 use select::predicate::{Attr, Class, Name, Predicate};
+use std::io;
 
 type BeebUrl<'a> = &'a str;
 
@@ -56,10 +58,24 @@ pub struct IplayerDocument {
     pub idoc: Document,
 }
 
+//error_chain! {
+//   foreign_links {
+//       ReqError(reqwest::Error);
+//       IoError(std::io::Error);
+//   }
+//}
 impl<'a> IplayerDocument {
     pub fn new(bu: TestBeebUrl) -> IplayerDocument {
         let idoc = Document::from(bu);
         IplayerDocument { idoc }
+    }
+    pub fn from_url(url: &str) -> Result<IplayerDocument, io::Error> {
+        let res =reqwest::get(url).unwrap();
+        let doc = Document::from_read(res);
+        match doc {
+            Ok(idoc) => Ok(IplayerDocument { idoc: idoc}),
+            Err(e) => Err(e)
+        }
     }
 
     pub fn programmes(&self) -> Vec<Programme> {

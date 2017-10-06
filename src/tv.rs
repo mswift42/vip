@@ -1,5 +1,6 @@
 extern crate select;
 extern crate reqwest;
+extern crate test;
 use select::document::Document;
 use select::node::Node;
 use select::predicate::{Attr, Class, Name, Predicate};
@@ -161,8 +162,9 @@ fn find_synopsis(node: &Node) -> String {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
+    use super::test::Bencher;
     #[test]
     fn test_document() {
         let doc = IplayerDocument::new(include_str!("../testhtml/pop.html"));
@@ -189,6 +191,13 @@ mod test {
             progr[0].url,
             "http://www.bbc.co.uk/iplayer/episode/b0959ppk/strike-the-silkworm-episode-1"
         );
+    }
+
+    #[bench]
+    fn bench_programmes(b: &mut Bencher) {
+        let doc = IplayerDocument::new(include_str!("../testhtml/pop.html"));
+        b.iter(|| doc.programmes());
+
     }
     #[test]
     fn test_find_title() {

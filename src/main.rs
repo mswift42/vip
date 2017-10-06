@@ -1,3 +1,4 @@
+#![feature(test)]
 #[macro_use]
 extern crate error_chain;
 extern crate select;
@@ -37,7 +38,9 @@ fn run() -> reqwest::Result<()> {
     let idoc = tv::IplayerDocument{idoc: popdoc};
     let programmes = idoc.programmes();
     let titles: Vec<(&str, &str)> = programmes.iter().map(|i| (&*i.title, &*i.synopsis)).collect();
-    println!("{:?}", titles);
+    for i in titles {
+        println!("Programme: {:?}\n", i);
+    }
     Ok(())
 }
 

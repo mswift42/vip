@@ -8,6 +8,7 @@ use select::node::Node;
 use select::predicate::{Attr, Class, Name, Predicate};
 
 mod tv;
+mod db;
 
 fn main() {
   //  PROFILER.lock().unwrap().start("mainprofile").unwrap();

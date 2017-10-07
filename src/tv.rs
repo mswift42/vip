@@ -196,8 +196,13 @@ mod tests {
     #[bench]
     fn bench_programmes(b: &mut Bencher) {
         let doc = IplayerDocument::new(include_str!("../testhtml/pop.html"));
-        b.iter(|| doc.programmes());
-
+        b.iter(|| {
+            let ma = doc.programmes();
+        });
+        let doc = IplayerDocument::new(include_str!("../testhtml/films1.html"));
+        b.iter(|| {
+            let ma = doc.programmes();
+        });
     }
     #[test]
     fn test_find_title() {

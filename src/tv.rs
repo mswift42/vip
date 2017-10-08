@@ -10,13 +10,14 @@ type BeebUrl<'a> = &'a str;
 
 type TestBeebUrl = &'static str;
 
-pub struct Category<'a> {
-    name: String,
-    programmes: Vec<&'a Programme>,
+#[derive(Debug)]
+pub struct Category {
+    pub name: String,
+    pub programmes: Vec<Programme>,
 }
 
-impl<'a> Category<'a> {
-    pub fn new(name: String, programmes: Vec<&'a Programme>) -> Category<'a> {
+impl Category {
+    pub fn new(name: String, programmes: Vec<Programme>) -> Category {
         Category { name, programmes }
     }
 }

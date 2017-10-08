@@ -5,13 +5,13 @@ extern crate time;
 
 use tv::Category;
 #[derive(Debug)]
-pub struct ProgrammeDB<'a> {
-    pub categories: Vec<Category<'a>>,
+pub struct ProgrammeDB {
+    pub categories: Vec<Category>,
     pub saved: time::Tm,
 }
 
-impl<'a> ProgrammeDB<'a> {
-    pub fn new<'b>(cats: Vec<Category<'a>>) -> ProgrammeDB {
+impl ProgrammeDB {
+    pub fn new(cats: Vec<Category>) -> ProgrammeDB {
         ProgrammeDB { categories: cats, saved: time::now()}
     }
 }
@@ -24,11 +24,11 @@ mod tests {
 
     #[test]
     fn test_programme_db() {
-        let doc = IplayerDocument::new(include_str!("../testhtml/pop.html"))
+        let doc = IplayerDocument::new(include_str!("../testhtml/pop.html"));
         let progs = doc.programmes();
-        let cat := Category::new("mostpopular", &progs);
-        assert_eq!(progr[0].title, "Strike");
-        let db = ProgrammeDB::new(cat);
-        assert_eq!(db.)
+        let cat = Category::new("mostpopular".to_string(), progs);
+        let db = ProgrammeDB::new(vec![cat]);
+        assert_eq!(db.categories[0].programmes[0].title, "Strike");
+        assert_eq!(db.categories[0].name, "mostpopular");
     }
 }

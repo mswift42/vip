@@ -17,7 +17,7 @@ pub struct Category {
 }
 
 impl Category {
-    pub fn new(name: String, programmes: Vec<Programme>) -> Category {
+    pub fn new(name: String, programmes:  Vec<Programme>) -> Category {
         Category { name, programmes }
     }
 }
@@ -32,9 +32,9 @@ pub struct Programme {
     pub pid: String,
     pub thumbnail: String,
     pub url: String,
-    pub index: u16,
+    pub index: u32,
 }
-impl<'a> Programme {
+impl Programme {
     fn new(node: &Node) -> Programme {
         let title = find_title(node);
         let subtitle = find_subtitle(node);
@@ -42,7 +42,7 @@ impl<'a> Programme {
         let pid = find_pid(node);
         let thumbnail = find_thumbnail(node).to_string();
         let url = find_url(node);
-        let index = 0;
+        let index: u32 = 0;
         Programme {
             title,
             subtitle,
@@ -52,6 +52,10 @@ impl<'a> Programme {
             url,
             index,
         }
+    }
+
+    pub fn update_index(&mut self, newindex: u32)  {
+        self.index = newindex;
     }
 }
 
@@ -198,11 +202,11 @@ mod tests {
     fn bench_programmes(b: &mut Bencher) {
         let doc = IplayerDocument::new(include_str!("../testhtml/pop.html"));
         b.iter(|| {
-            let ma = doc.programmes();
+            let _ma = doc.programmes();
         });
         let doc = IplayerDocument::new(include_str!("../testhtml/films1.html"));
         b.iter(|| {
-            let ma = doc.programmes();
+            let _ma = doc.programmes();
         });
     }
     #[test]

@@ -12,7 +12,24 @@ pub struct ProgrammeDB {
 
 impl ProgrammeDB {
     pub fn new(cats: Vec<Category>) -> ProgrammeDB {
-        ProgrammeDB { categories: cats, saved: time::now()}
+        ProgrammeDB {
+            categories: cats,
+            saved: time::now(),
+        }
+    }
+
+    pub fn save(&self) {
+
+    }
+
+    fn index(&mut self) {
+        let mut index: u32 =  0;
+        for i in &mut self.categories {
+            for j  in i.programmes.iter_mut() {
+                j.update_index(index);
+                index += 1;
+            }
+        }
     }
 }
 
@@ -27,8 +44,14 @@ mod tests {
         let doc = IplayerDocument::new(include_str!("../testhtml/pop.html"));
         let progs = doc.programmes();
         let cat = Category::new("mostpopular".to_string(), progs);
-        let db = ProgrammeDB::new(vec![cat]);
+        let mut db = ProgrammeDB::new(vec![cat]);
         assert_eq!(db.categories[0].programmes[0].title, "Strike");
         assert_eq!(db.categories[0].name, "mostpopular");
+        db.index();
+        assert_eq!(db.categories[0].programmes[1].index, 1);
+        assert_eq!(db.categories[0].programmes[2].index, 2);
+
     }
+
+
 }

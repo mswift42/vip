@@ -1,24 +1,25 @@
 extern crate serde;
 extern crate serde_json;
 extern crate time;
-
-
+extern crate chrono;
+use chrono::prelude::*;
 use tv::Category;
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct ProgrammeDB {
     pub categories: Vec<Category>,
-    pub saved: time::Tm,
+    pub saved: DateTime<Utc>,
 }
 
 impl ProgrammeDB {
     pub fn new(cats: Vec<Category>) -> ProgrammeDB {
         ProgrammeDB {
             categories: cats,
-            saved: time::now(),
+            saved: Utc::now(),
         }
     }
 
-    pub fn save(&self) {
+    pub fn save(&mut self) {
+        self.index();
 
     }
 

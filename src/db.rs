@@ -1,9 +1,13 @@
+extern crate chrono;
 extern crate serde;
 extern crate serde_json;
 extern crate time;
-extern crate chrono;
+
+use std::fs::File;
+use std::io::prelude::*;
 use chrono::prelude::*;
 use tv::Category;
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ProgrammeDB {
     pub categories: Vec<Category>,
@@ -20,13 +24,15 @@ impl ProgrammeDB {
 
     pub fn save(&mut self) {
         self.index();
-
+        let serialized = serde_json::to_string(self).unwrap();
+        let mut file = File::open("testdb.json").unwrap();
+        file.write_all(serialized.as_bytes());
     }
 
     fn index(&mut self) {
-        let mut index: u32 =  0;
+        let mut index: u32 = 0;
         for i in &mut self.categories {
-            for j  in i.programmes.iter_mut() {
+            for j in i.programmes.iter_mut() {
                 j.update_index(index);
                 index += 1;
             }
@@ -51,7 +57,6 @@ mod tests {
         db.index();
         assert_eq!(db.categories[0].programmes[1].index, 1);
         assert_eq!(db.categories[0].programmes[2].index, 2);
-
     }
 
 

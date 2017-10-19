@@ -22,10 +22,18 @@ impl ProgrammeDB {
         }
     }
 
+    pub fn from_saved() -> ProgrammeDB {
+        let decoded = serde_json::from_reader(File::open("testdb.json").unwrap()).unwrap();
+        decoded
+    }
+
     pub fn save(&mut self) {
         self.index();
         let serialized = serde_json::to_string(self).unwrap();
-        let mut file = File::open("testdb.json").unwrap();
+        let mut file = match File::open("/home/martin/github/vip/src/testdb.json") {
+            Err(why) => panic!("{:}", why),
+            Ok(file) => file,
+        };
         file.write_all(serialized.as_bytes());
     }
 
@@ -54,10 +62,11 @@ mod tests {
         let mut db = ProgrammeDB::new(vec![cat]);
         assert_eq!(db.categories[0].programmes[0].title, "Strike");
         assert_eq!(db.categories[0].name, "mostpopular");
-        db.index();
+        db.save();
         assert_eq!(db.categories[0].programmes[1].index, 1);
         assert_eq!(db.categories[0].programmes[2].index, 2);
     }
+
 
 
 }

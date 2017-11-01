@@ -5,6 +5,8 @@ extern crate time;
 
 use std::fs::File;
 use std::io::prelude::*;
+use std::io::BufReader;
+use std::path::Path;
 use chrono::prelude::*;
 use tv::Category;
 
@@ -23,18 +25,26 @@ impl ProgrammeDB {
     }
 
     pub fn from_saved() -> ProgrammeDB {
-        let decoded = serde_json::from_reader(File::open("testdb.json").unwrap()).unwrap();
+        let mut file = match File::open("/home/martin/github/vip/src/testdb.json") {
+            Err(why) => panic!("{:}", why),
+            Ok(file) => file,
+        };
+        let mut buf_reader = BufReader::new(file);
+        let mut contents = String::new();
+        buf_reader.read_to_string(&mut contents);
+        let decoded = serde_json::from_reader(buf_reader).unwrap();
         decoded
     }
 
     pub fn save(&mut self) {
         self.index();
         let serialized = serde_json::to_string(self).unwrap();
-        let mut file = match File::open("/home/martin/github/vip/src/testdb.json") {
+        let path = Path::new("/home/martin/github/vip/src/testdb.json");
+        let mut file = match File::create(&path) {
             Err(why) => panic!("{:}", why),
             Ok(file) => file,
         };
-        file.write_all(serialized.as_bytes());
+        file.write_all(serialized.as_bytes()).expect("unable to write data");
     }
 
     fn index(&mut self) {

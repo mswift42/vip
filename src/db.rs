@@ -25,23 +25,29 @@ impl ProgrammeDB {
     }
 
     pub fn from_saved() -> ProgrammeDB {
-        let mut file = match File::open("/home/martin/github/vip/src/testdb.json") {
-            Err(why) => panic!("{:}", why),
+        let path = Path::new("/home/martin/github/vip/src/testdb.json");
+        let mut file = match File::open(&path) {
+            Err(why) => panic!("{:?}", why),
             Ok(file) => file,
         };
-        let mut buf_reader = BufReader::new(file);
         let mut contents = String::new();
-        buf_reader.read_to_string(&mut contents);
-        let decoded = serde_json::from_reader(buf_reader).unwrap();
-        decoded
+        file.read_to_string(&mut contents).unwrap();
+        let decoded: Result<ProgrammeDB, serde_json::Error> = serde_json::from_str(&contents);
+        match decoded {
+            Err(why) => panic!("{:}", why),
+            Ok(dec) => return dec,
+        };
     }
 
     pub fn save(&mut self) {
         self.index();
-        let serialized = serde_json::to_string(self).unwrap();
+        let serialized = match serde_json::to_string(self) {
+            Err(why) => panic!("{:?}", why),
+            Ok(file) => file,
+        };
         let path = Path::new("/home/martin/github/vip/src/testdb.json");
         let mut file = match File::create(&path) {
-            Err(why) => panic!("{:}", why),
+            Err(why) => panic!("{:?}", why),
             Ok(file) => file,
         };
         file.write_all(serialized.as_bytes()).expect("unable to write data");
@@ -76,7 +82,10 @@ mod tests {
         assert_eq!(db.categories[0].programmes[1].index, 1);
         assert_eq!(db.categories[0].programmes[2].index, 2);
     }
-
-
+    #[test]
+    fn test_programme_db_from_saved() {
+        let db = ProgrammeDB::from_saved();
+        assert_eq!(db.categories[0].programmes[0].title, "EastEnders");
+    }
 
 }

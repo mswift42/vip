@@ -1,5 +1,5 @@
-extern crate select;
 extern crate reqwest;
+extern crate select;
 extern crate test;
 use select::document::Document;
 use select::node::Node;
@@ -17,7 +17,7 @@ pub struct Category {
 }
 
 impl Category {
-    pub fn new(name: String, programmes:  Vec<Programme>) -> Category {
+    pub fn new(name: String, programmes: Vec<Programme>) -> Category {
         Category { name, programmes }
     }
 }
@@ -55,7 +55,7 @@ impl Programme {
         }
     }
 
-    pub fn update_index(&mut self, newindex: u32)  {
+    pub fn update_index(&mut self, newindex: u32) {
         self.index = newindex;
     }
 }
@@ -77,11 +77,11 @@ impl<'a> IplayerDocument {
         IplayerDocument { idoc }
     }
     pub fn from_url(url: &str) -> Result<IplayerDocument, io::Error> {
-        let res =reqwest::get(url).unwrap();
+        let res = reqwest::get(url).unwrap();
         let doc = Document::from_read(res);
         match doc {
-            Ok(idoc) => Ok(IplayerDocument { idoc: idoc}),
-            Err(e) => Err(e)
+            Ok(idoc) => Ok(IplayerDocument { idoc: idoc }),
+            Err(e) => Err(e),
         }
     }
 
@@ -92,15 +92,8 @@ impl<'a> IplayerDocument {
             .map(|node| Programme::new(&node))
             .collect()
     }
-
-    fn program_page(&self) -> Vec<String> {
-        let mut results: Vec<String> = Vec::new();
-        for node in self.idoc.find(Class("view-more-container")) {
-            let sub = node.attr("href").unwrap().to_string();
-            results.push(String::from("http://www.bbc.co.uk") + &sub);
-        }
-        results
-    }
+    // program_page checks if a given list item has a link to it's program page,
+    // and if yes, returns it.
 
     fn next_pages(&self) -> Vec<String> {
         let mut results: Vec<String> = Vec::new();
@@ -112,6 +105,18 @@ impl<'a> IplayerDocument {
     }
 }
 
+fn program_page(node: &Node) -> String {
+    //    for node in self.idoc.find(Class("view-more-container")) {
+    //        let sub = node.attr("href").unwrap().to_string();
+    //        results.push(String::from("http://www.bbc.co.uk") + &sub);
+    //    }
+    let view_more = node.find(Class("view-more-container"))
+        .next()
+        .unwrap()
+        .attr("href")
+        .unwrap();
+    view_more
+}
 fn find_title(node: &Node) -> String {
     node.find(Class("secondary").descendant(Class("title")))
         .next()

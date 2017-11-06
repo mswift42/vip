@@ -25,7 +25,6 @@ impl Category {
 type IplayerSelection<'a> = Result<Programme, BeebUrl<'a>>;
 
 
-
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Programme {
     pub title: String,
@@ -86,7 +85,7 @@ impl<'a> IplayerDocument {
         }
     }
 
-    pub fn programmes(&self) -> Vec<Programme> {
+    pub fn programmes(&self) -> Vec<IplayerSelection> {
         //        for node in self.idoc.find(Class("list-item-inner")) {
         self.idoc
             .find(Class("list-item-inner"))
@@ -94,7 +93,7 @@ impl<'a> IplayerDocument {
             .collect()
     }
 
-    fn sub_pages(&self) -> Vec<String> {
+    fn program_page(&self) -> Vec<String> {
         let mut results: Vec<String> = Vec::new();
         for node in self.idoc.find(Class("view-more-container")) {
             let sub = node.attr("href").unwrap().to_string();
@@ -392,14 +391,14 @@ mod tests {
     #[test]
     fn test_sub_pages() {
         let doc = IplayerDocument::new(include_str!("../testhtml/films1.html"));
-        let sub_pages = doc.sub_pages();
+        let sub_pages = doc.program_page();
         assert_eq!(
             sub_pages[0],
             "http://www.bbc.co.uk/iplayer/episodes/p04bkttz"
         );
 
         let doc = IplayerDocument::new(include_str!("../testhtml/comedy1.html"));
-        let sub_pages = doc.sub_pages();
+        let sub_pages = doc.program_page();
         assert_eq!(sub_pages.len(), 10);
         assert_eq!(
             sub_pages[0],

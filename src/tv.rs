@@ -10,7 +10,7 @@ type BeebUrl<'a> = &'a str;
 
 type TestBeebUrl = &'static str;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Category {
     pub name: String,
     pub programmes: Vec<Programme>,
@@ -22,9 +22,11 @@ impl Category {
     }
 }
 
+type IplayerSelection<'a> = Result<Programme, BeebUrl<'a>>;
 
 
-#[derive(Debug)]
+
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Programme {
     pub title: String,
     pub subtitle: Option<String>,

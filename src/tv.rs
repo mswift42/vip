@@ -6,7 +6,7 @@ use select::node::Node;
 use select::predicate::{Attr, Class, Name, Predicate};
 use std::io;
 
-type BeebUrl<'a> = &'a str;
+type BeebUrl = String;
 
 type TestBeebUrl = &'static str;
 
@@ -22,7 +22,28 @@ impl Category {
     }
 }
 
-type IplayerSelection<'a> = Result<Programme, BeebUrl<'a>>;
+
+struct IplayerSelection {
+    programme: Option<Programme>,
+    prog_page: Option<BeebUrl>,
+}
+
+impl IplayerSelection {
+    fn new(node: &Node) -> IplayerSelection {
+        let progpage = program_page(node);
+        if progpage != "".to_string() {
+            return IplayerSelection {
+                programme: None,
+                prog_page: Some(program_page(node)),
+            };
+        } else {
+            return IplayerSelection {
+                programme: Some(Programme::new(node)),
+                prog_page: None,
+            };
+        }
+    }
+}
 
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -85,7 +106,7 @@ impl<'a> IplayerDocument {
         }
     }
 
-    pub fn programmes(&self) -> Vec<IplayerSelection> {
+    pub fn programmes(&self) -> Vec<Programme> {
         //        for node in self.idoc.find(Class("list-item-inner")) {
         self.idoc
             .find(Class("list-item-inner"))
@@ -114,7 +135,7 @@ fn program_page(node: &Node) -> String {
         .next()
         .unwrap()
         .attr("href")
-        .unwrap();
+        .unwrap().to_string();
     view_more
 }
 fn find_title(node: &Node) -> String {

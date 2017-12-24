@@ -209,6 +209,14 @@ mod tests {
             "Today's most popular programmes available on BBC iPlayer."
         );
     }
+
+    #[test]
+    fn test_IplayerSelection() {
+        let doc = IplayerDocument::new(include_str!("../testhtml/pop.html"));
+        let node = doc.idoc.find(Class("list-item-inner")).next().unwrap();
+        let sel = IplayerSelection::new(&node);
+        assert_eq!(sel.prog_page, None);
+    }
     #[test]
     fn test_programmes() {
         let doc = IplayerDocument::new(include_str!("../testhtml/pop.html"));
@@ -414,29 +422,29 @@ mod tests {
         // episode/b01r82f3/being-human-series-5-6-the-last-broadcast"
         //        );
     }
-    #[test]
-    fn test_sub_pages() {
-        let doc = IplayerDocument::new(include_str!("../testhtml/films1.html"));
-        let sub_pages = doc.program_page();
-        assert_eq!(
-            sub_pages[0],
-            "http://www.bbc.co.uk/iplayer/episodes/p04bkttz"
-        );
+    //#[test]
+    //fn test_sub_pages() {
+        //let doc = IplayerDocument::new(include_str!("../testhtml/films1.html"));
+//        let sub_pages = doc.program_page();
+//        assert_eq!(
+//            sub_pages[0],
+//            "http://www.bbc.co.uk/iplayer/episodes/p04bkttz"
+//        );
+//
+//        let doc = IplayerDocument::new(include_str!("../testhtml/comedy1.html"));
+//        let sub_pages = doc.program_page();
+//        assert_eq!(sub_pages.len(), 10);
+//        assert_eq!(
+//            sub_pages[0],
+    //            "http://www.bbc.co.uk/iplayer/episodes/p01djw5m"
+    //        );
+    //        assert_eq!(
+    //            sub_pages[1],
+    //            "http://www.bbc.co.uk/iplayer/episodes/b00hqlc4"
+    //        );
+    //    }
 
-        let doc = IplayerDocument::new(include_str!("../testhtml/comedy1.html"));
-        let sub_pages = doc.program_page();
-        assert_eq!(sub_pages.len(), 10);
-        assert_eq!(
-            sub_pages[0],
-            "http://www.bbc.co.uk/iplayer/episodes/p01djw5m"
-        );
-        assert_eq!(
-            sub_pages[1],
-            "http://www.bbc.co.uk/iplayer/episodes/b00hqlc4"
-        );
-    }
-
-    #[test]
+        #[test]
     fn test_next_page() {
         let doc = IplayerDocument::new(include_str!("../testhtml/comedy1.html"));
         let next_pages = doc.next_pages();

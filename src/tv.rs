@@ -11,13 +11,13 @@ type BeebUrl = String;
 type TestBeebUrl = &'static str;
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Category {
+pub struct Category<'a> {
     pub name: String,
-    pub programmes: Vec<Programme>,
+    pub programmes: Vec<&'a Programme>,
 }
 
-impl Category {
-    pub fn new(name: String, programmes: Vec<Programme>) -> Category {
+impl<'a> Category<'a> {
+    pub fn new(name: String, programmes: Vec<&Programme>) -> Category {
         Category { name, programmes }
     }
 }
@@ -106,11 +106,11 @@ impl<'a> IplayerDocument {
         }
     }
 
-    pub fn programmes(&self) -> Vec<Programme> {
+    pub fn programmes(&self) -> Vec<&Programme> {
         //        for node in self.idoc.find(Class("list-item-inner")) {
         self.idoc
             .find(Class("list-item-inner"))
-            .map(|node| Programme::new(&node))
+            .map(move |node| &Programme::new(&node))
             .collect()
     }
     // program_page checks if a given list item has a link to it's program page,

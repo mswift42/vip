@@ -11,12 +11,12 @@ use chrono::prelude::*;
 use tv::Category;
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct ProgrammeDB {
-    pub categories: Vec<Category>,
+pub struct ProgrammeDB<'a> {
+    pub categories: Vec<Category<'a>>,
     pub saved: DateTime<Utc>,
 }
 
-impl ProgrammeDB {
+impl<'a> ProgrammeDB<'a> {
     pub fn new(cats: Vec<Category>) -> ProgrammeDB {
         ProgrammeDB {
             categories: cats,
@@ -24,7 +24,7 @@ impl ProgrammeDB {
         }
     }
 
-    pub fn from_saved() -> ProgrammeDB {
+    pub fn from_saved() -> ProgrammeDB<'a> {
         let path = Path::new("/home/martin/github/vip/src/testdb.json");
         let mut file = match File::open(&path) {
             Err(why) => panic!("{:?}", why),

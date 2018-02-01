@@ -23,11 +23,11 @@ impl Category {
 
 struct IplayerSelection<> {
     programme: Option<Programme>,
-    prog_page: Option<&'static str>,
+    prog_page: Option<String>,
 }
 
-impl IplayerSelection {
-    fn new(node: &Node) -> IplayerSelection {
+impl<'a> IplayerSelection {
+    fn new(node: &Node<'a>) -> IplayerSelection {
         let progpage = program_page(node);
         if progpage != "" {
             return IplayerSelection {
@@ -134,7 +134,8 @@ fn program_page(node: &Node) -> String {
         .next()
         .unwrap()
         .attr("href")
-        .unwrap().to_string()
+        .unwrap()
+        .to_string()
 }
 
 fn find_title(node: &Node) -> String {

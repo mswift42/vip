@@ -7,9 +7,6 @@ use select::node::Node;
 use select::predicate::{Attr, Class, Name, Predicate};
 use std::io;
 
-type BeebUrl = String;
-
-type TestBeebUrl = &'static str;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Category {
@@ -24,9 +21,9 @@ impl Category {
 }
 
 
-struct IplayerSelection {
+struct IplayerSelection<> {
     programme: Option<Programme>,
-    prog_page: Option<BeebUrl>,
+    prog_page: Option<&'static str>,
 }
 
 impl IplayerSelection {
@@ -95,8 +92,8 @@ pub struct IplayerDocument {
 //   }
 //}
 impl<'a> IplayerDocument {
-    pub fn new(bu: TestBeebUrl) -> IplayerDocument {
-        let idoc = Document::from(bu);
+    pub fn new(doc: &'static str) -> IplayerDocument {
+        let idoc = Document::from(doc);
         IplayerDocument { idoc }
     }
     pub fn from_url(url: &str) -> Result<IplayerDocument, io::Error> {

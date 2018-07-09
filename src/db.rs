@@ -56,7 +56,7 @@ impl ProgrammeDB {
     fn index(&mut self) {
         let mut index: u32 = 0;
         for i in &mut self.categories {
-            for j in i.programmes.iter_mut() {
+            for j in &mut i.programmes {
                 j.update_index(index);
                 index += 1;
             }

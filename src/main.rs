@@ -33,9 +33,7 @@ fn main() {
 }
 
 #[async]
-fn fetch_documents() {
-
-}
+fn fetch_documents() {}
 
 fn run() -> reqwest::Result<()> {
     let mpophtml = reqwest::get("http://www.bbc.co.uk/iplayer/group/most-popular")?;

@@ -28,10 +28,10 @@ struct IplayerSelection {
     prog_page: Option<BeebUrl>,
 }
 
-impl IplayerSelection {
-    fn new(node: &Node) -> IplayerSelection {
+impl<'a> IplayerSelection {
+    fn new(node: &Node<'a>) -> IplayerSelection {
         let progpage = program_page(node);
-        if progpage != "".to_string() {
+        if progpage != "" {
             return IplayerSelection {
                 programme: None,
                 prog_page: Some(program_page(node)),
@@ -50,12 +50,14 @@ impl IplayerSelection {
 pub struct Programme {
     pub title: String,
     pub subtitle: Option<String>,
-    pub synopsis: String,
+    pub synopsis: String,cargo +nigthly install clippy -f
+
     pub pid: String,
     pub thumbnail: String,
     pub url: String,
     pub index: u32,
 }
+
 impl Programme {
     fn new(node: &Node) -> Programme {
         let title = find_title(node);
@@ -131,13 +133,14 @@ fn program_page(node: &Node) -> String {
     //        let sub = node.attr("href").unwrap().to_string();
     //        results.push(String::from("http://www.bbc.co.uk") + &sub);
     //    }
-    let view_more = node.find(Class("view-more-container"))
+    node.find(Class("view-more-container"))
         .next()
         .unwrap()
         .attr("href")
-        .unwrap().to_string();
-    view_more
+        .unwrap()
+        .to_string()
 }
+
 fn find_title(node: &Node) -> String {
     node.find(Class("secondary").descendant(Class("title")))
         .next()
@@ -162,10 +165,10 @@ fn find_url(node: &Node) -> String {
         .unwrap()
         .to_string();
     if path.starts_with("http://www.bbc.co.uk") {
-        return path;
+        path
     } else {
         let url = String::from("http://www.bbc.co.uk");
-        return url + &path;
+        url + &path
     }
 }
 
@@ -197,6 +200,7 @@ fn find_synopsis(node: &Node) -> String {
 mod tests {
     use super::*;
     use super::test::Bencher;
+
     #[test]
     fn test_document() {
         let doc = IplayerDocument::new(include_str!("../testhtml/pop.html"));
@@ -217,6 +221,7 @@ mod tests {
         let sel = IplayerSelection::new(&node);
         assert_eq!(sel.prog_page, None);
     }
+
     #[test]
     fn test_programmes() {
         let doc = IplayerDocument::new(include_str!("../testhtml/pop.html"));
@@ -244,6 +249,7 @@ mod tests {
             let _ma = doc.programmes();
         });
     }
+
     #[test]
     fn test_find_title() {
         let doc = IplayerDocument::new(include_str!("../testhtml/pop.html"));
@@ -363,6 +369,7 @@ mod tests {
             "https://ichef.bbci.co.uk/images/ic/336x189/p01j34d4.jpg"
         );
     }
+
     #[test]
     fn test_find_url() {
         let doc = IplayerDocument::new(include_str!("../testhtml/pop.html"));

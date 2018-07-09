@@ -1,4 +1,5 @@
-#![feature(test)]
+#![feature(test,custom_attribute)]
+extern crate chrono;
 #[macro_use]
 extern crate error_chain;
 extern crate reqwest;
@@ -7,9 +8,10 @@ use select::document::Document;
 use select::node::Node;
 use select::predicate::{Attr, Class, Name, Predicate};
 
-mod tv;
+#[macro_use]
+extern crate serde_derive;
 mod db;
-
+mod tv;
 fn main() {
     //  PROFILER.lock().unwrap().start("mainprofile").unwrap();
     //let doc = tv::IplayerDocument::new(include_str!("../testhtml/pop.html"));
@@ -30,6 +32,11 @@ fn main() {
     run();
 }
 
+#[async]
+fn fetch_documents() {
+
+}
+
 fn run() -> reqwest::Result<()> {
     let mpophtml = reqwest::get("http://www.bbc.co.uk/iplayer/group/most-popular")?;
     let popdoc = Document::from_read(mpophtml).unwrap();
@@ -42,6 +49,22 @@ fn run() -> reqwest::Result<()> {
     for i in titles {
         println!("Programme: {:?}\n", i);
     }
+    let cat = tv::Category::new("mostpopular".to_string(), idoc.programmes());
+    let mut db = db::ProgrammeDB::new(vec![cat]);
+    db.save();
+    let db2 = db::ProgrammeDB::from_saved();
+    let comedyhtml = reqwest::get("http://www.bbc.co.uk/iplayer/categories/comedy/all?sort=atoz")?;
+    let comedydoc = Document::from_read(comedyhtml).unwrap();
+    let comedyidoc = tv::IplayerDocument { idoc: comedydoc };
+    let comedyprogrammes = comedyidoc.programmes();
+    let titles: Vec<(&str, &str)> = comedyprogrammes
+        .iter()
+        .map(|i| (&*i.title, &*i.synopsis))
+        .collect();
+    for i in titles {
+        println!("Programme: {:?}\n", i);
+    }
+    println!("{:?}", db2);
     Ok(())
 }
 

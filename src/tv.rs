@@ -1,6 +1,5 @@
 extern crate reqwest;
 extern crate select;
-// extern crate test;
 use select::document::Document;
 use select::node::Node;
 use select::predicate::{Attr, Class, Name, Predicate};
@@ -50,8 +49,7 @@ impl<'a> IplayerSelection {
 pub struct Programme {
     pub title: String,
     pub subtitle: Option<String>,
-    pub synopsis: String,cargo +nigthly install clippy -f
-
+    pub synopsis: String,
     pub pid: String,
     pub thumbnail: String,
     pub url: String,

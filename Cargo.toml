@@ -4,3 +4,6 @@ version = "0.0.1"
 authors = ["mswift42 <martin.haesler@gmail.com>"]
 
 [dependencies]
+select = "0.4.2"
+url = "1.7.1"
+reqwest = "0.8.7"

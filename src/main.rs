@@ -25,6 +25,22 @@ pub struct TestHTMLURL<'a> {
     url: &'a str
 }
 
+struct IplayerSelection<'a> {
+    prog: Option<Programme>,
+    programPage: Option<&'a str>,
+}
+
+pub struct Programme<'a> {
+    pub title: String,
+    pub subtitle: Option<String>,
+    pub synopsis: String,
+    pub thumbnail: &'a str,
+    pub url: String,
+    pub index: usize,
+    pub available: String,
+    pub duration: String,
+}
+
 impl<'a> BeebURL<'a> {
     fn load(&self) -> BoxResult<IplayerDocument> {
         let uri = url::Url::parse(self.url)?;

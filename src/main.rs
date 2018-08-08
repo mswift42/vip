@@ -26,8 +26,12 @@ pub struct TestHTMLURL<'a> {
 }
 
 struct IplayerSelection<'a> {
-    prog: Option<Programme>,
+    prog: Option<Programme<'a>>,
     programPage: Option<&'a str>,
+}
+
+struct IplayerNode<'a> {
+    node: select::node::Node<'a>
 }
 
 pub struct Programme<'a> {
@@ -50,14 +54,13 @@ impl<'a> BeebURL<'a> {
     }
 }
 
-impl<'a> TestHTMLURL<'a> {
-    fn load(&self) -> BoxResult<IplayerDocument> {
-        let html = fs::read(self.url)?;
-        let doc = Document::from_read(html)?;
-        Ok(IplayerDocument{doc})
-    }
-}
+//impl<'a> TestHTMLURL<'a> {
+//    fn load(&self) -> BoxResult<IplayerDocument> {
+//        let html = fs::read(self.url)?;
+//        let doc = Document::from_read(html)?;
+//        Ok(IplayerDocument{doc})
+//    }
+//}
 
 fn main() {
-    println!("Hello, world!");
 }

@@ -27,7 +27,7 @@ pub struct TestHTMLURL<'a> {
 
 struct IplayerSelection<'a> {
     prog: Option<Programme<'a>>,
-    programPage: Option<&'a str>,
+    programme_page: Option<&'a str>,
 }
 
 struct IplayerNode<'a> {

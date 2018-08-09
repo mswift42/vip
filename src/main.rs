@@ -13,8 +13,9 @@ pub trait DocumentLoader {
 
 type BoxResult<T> = Result<T, Box<error::Error>>;
 
-pub struct IplayerDocument {
+pub struct IplayerDocument<'a> {
     doc: Document,
+    url: &'a str,
 }
 
 pub struct BeebURL<'a> {
@@ -22,7 +23,7 @@ pub struct BeebURL<'a> {
 }
 
 pub struct TestHTMLURL<'a> {
-    url: &'a str
+    url: &'a str,
 }
 
 struct IplayerSelection<'a> {
@@ -31,7 +32,7 @@ struct IplayerSelection<'a> {
 }
 
 struct IplayerNode<'a> {
-    node: select::node::Node<'a>
+    node: select::node::Node<'a>,
 }
 
 pub struct Programme<'a> {
@@ -62,5 +63,4 @@ impl<'a> BeebURL<'a> {
 //    }
 //}
 
-fn main() {
-}
+fn main() {}

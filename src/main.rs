@@ -52,7 +52,7 @@ impl<'a> BeebURL<'a> {
         let resp = reqwest::get(uri)?;
         let doc = select::document::Document::from_read(resp)?;
         Ok(IplayerDocument {
-            doc: doc,
+            doc,
             url: self.url,
         })
     }
@@ -63,15 +63,13 @@ impl<'a> TestHTMLURL<'a> {
         let html = fs::read(self.url)?;
         let doc = Document::from_read(&html[..])?;
         Ok(IplayerDocument {
-            doc: doc,
+            doc,
             url: self.url,
         })
     }
 }
 
-fn main() {
-    println!("{}", env!("CARGO_MANIFEST_DIR"));
-}
+fn main() {}
 
 #[cfg(test)]
 mod tests {

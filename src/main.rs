@@ -69,16 +69,22 @@ impl<'a> TestHTMLURL<'a> {
     }
 }
 
-fn main() {}
+fn main() {
+    println!("{}", env!("CARGO_MANIFEST_DIR"));
+}
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+    use std::path::PathBuf;
     #[test]
     fn test_load() {
-        let tu = super::TestHTMLURL {
-            url: "../testhtml/films1.html",
+        let mut d = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        d.push("testhtml");
+        let tu = TestHTMLURL {
+            url: "testhtml/films1.html",
         };
         let id = tu.load();
-        assert!(id.is_err());
+        assert!(id.is_ok());
     }
 }

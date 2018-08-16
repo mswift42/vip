@@ -61,7 +61,7 @@ impl<'a> BeebURL<'a> {
 impl<'a> TestHTMLURL<'a> {
     fn load(&self) -> BoxResult<IplayerDocument> {
         let html = fs::read(self.url)?;
-        let doc = Document::from_read(&html)?;
+        let doc = Document::from_read(&html[..])?;
         Ok(IplayerDocument {
             doc: doc,
             url: self.url,

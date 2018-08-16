@@ -51,16 +51,22 @@ impl<'a> BeebURL<'a> {
         let uri = url::Url::parse(self.url)?;
         let resp = reqwest::get(uri)?;
         let doc = select::document::Document::from_read(resp)?;
-        Ok(IplayerDocument { doc })
+        Ok(IplayerDocument {
+            doc: doc,
+            url: self.url,
+        })
     }
 }
 
-//impl<'a> TestHTMLURL<'a> {
-//    fn load(&self) -> BoxResult<IplayerDocument> {
-//        let html = fs::read(self.url)?;
-//        let doc = Document::from_read(html)?;
-//        Ok(IplayerDocument{doc})
-//    }
-//}
+impl<'a> TestHTMLURL<'a> {
+    fn load(&self) -> BoxResult<IplayerDocument> {
+        let html = fs::read(self.url)?;
+        let doc = Document::from_read(&html)?;
+        Ok(IplayerDocument {
+            doc: doc,
+            url: self.url,
+        })
+    }
+}
 
 fn main() {}

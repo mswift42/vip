@@ -70,3 +70,15 @@ impl<'a> TestHTMLURL<'a> {
 }
 
 fn main() {}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_load() {
+        let tu = super::TestHTMLURL {
+            url: "../testhtml/films1.html",
+        };
+        let id = tu.load();
+        assert!(id.is_err());
+    }
+}

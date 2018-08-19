@@ -6,6 +6,7 @@ use std::error;
 use std::fs;
 
 use select::document::Document;
+use select::predicate::{Class, Name};
 
 pub trait DocumentLoader {
     fn load(&self) -> BoxResult<IplayerDocument>;
@@ -33,6 +34,15 @@ struct IplayerSelection<'a> {
 
 struct IplayerNode<'a> {
     node: select::node::Node<'a>,
+}
+
+impl<'a> IplayerNode<'a> {
+    fn programme_node(&self) -> Option<IplayerNode> {
+       match self.node.find(Class("content-item")).next() {
+          None => None,
+           Some(nd) => Some(IplayerNode{node: nd}),
+       }
+    }
 }
 
 pub struct Programme<'a> {

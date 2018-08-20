@@ -43,6 +43,13 @@ impl<'a> IplayerNode<'a> {
            Some(nd) => Some(IplayerNode{node: nd}),
        }
     }
+
+    fn programme_site(&self) ->Option<&'a str> {
+        match self.node.find(Class("lnk")).next() {
+            None => None,
+            Some(nd) => Some(nd.attr("href").unwrap()),
+        }
+    }
 }
 
 pub struct Programme<'a> {

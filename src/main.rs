@@ -50,6 +50,23 @@ impl<'a> IplayerNode<'a> {
             Some(nd) => Some(nd.attr("href").unwrap()),
         }
     }
+
+    fn title(&self) -> Option<String> {
+        match self.node.find(Class("content-item__title")).next() {
+            None => None,
+            Some(nd) => Some(nd.text()),
+        }
+
+    }
+
+    fn subtitle(&self) -> Option<String> {
+        match self.node.find(Class("content-item__info__primary"))
+            .next()?.descendants().next()?
+            .find(Class("content-item__description")).next() {
+            None => None,
+            Some(nd) => Some(nd.text()),
+        }
+    }
 }
 
 pub struct Programme<'a> {

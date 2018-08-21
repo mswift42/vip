@@ -115,7 +115,7 @@ pub struct Programme<'a> {
     pub subtitle: Option<String>,
     pub synopsis: String,
     pub thumbnail: &'a str,
-    pub url: String,
+    pub url: &'a str,
     pub index: usize,
     pub available: String,
     pub duration: String,

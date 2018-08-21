@@ -79,6 +79,35 @@ impl<'a> IplayerNode<'a> {
         self.node.find(Name("a"))
             .next()?.attr("href")
     }
+
+    fn thumbnail(&self) -> Option<&'a str> {
+        match self.node.find(Class("rs-image")).next()
+            ?.descendants().next()?
+            .find(Class("picture")).next()?
+            .find(Class("source")).next()?
+            .attr("srcset") {
+            None => None,
+            Some(set) => set.split(' ').next()
+        }
+    }
+
+    fn available(&self) -> Option<String> {
+        match self.node.find(Class("content-item__sublabels")).next()
+        ?.descendants().next()?
+            .find(Name("span")).last() {
+            None => None,
+            Some(sp) => Some(sp.text()),
+        }
+    }
+
+    fn duration(&self) -> Option<String> {
+        match self.node.find(Class("content-item__sublabels")).next()
+            ?.descendants().next()?
+            .find(Name("span")).next() {
+            None => None,
+            Some(sp) => Some(sp.text()),
+        }
+    }
 }
 
 pub struct Programme<'a> {

@@ -45,10 +45,8 @@ impl<'a> IplayerNode<'a> {
     }
 
     fn programme_site(&self) ->Option<&'a str> {
-//        match self.node.find(Class("lnk")).next() {
-//            None => None,
-//            Some(nd) => Some(nd.attr("href").unwrap()),
-//        }
+        self.node.find(Class("lnk"))
+            .next()?.attr("href")
     }
 
     fn title(&self) -> Option<String> {

@@ -45,10 +45,10 @@ impl<'a> IplayerNode<'a> {
     }
 
     fn programme_site(&self) ->Option<&'a str> {
-        match self.node.find(Class("lnk")).next() {
-            None => None,
-            Some(nd) => Some(nd.attr("href").unwrap()),
-        }
+//        match self.node.find(Class("lnk")).next() {
+//            None => None,
+//            Some(nd) => Some(nd.attr("href").unwrap()),
+//        }
     }
 
     fn title(&self) -> Option<String> {
@@ -66,6 +66,20 @@ impl<'a> IplayerNode<'a> {
             None => None,
             Some(nd) => Some(nd.text()),
         }
+    }
+
+    fn synopsis(&self) -> Option<String> {
+        match self.node.find(Class("content-item__info__secondary"))
+            .next()?.descendants().next()?
+            .find(Class("content-item__description")).next() {
+            None => None,
+            Some(nd) => Some(nd.text()),
+        }
+    }
+
+    fn url(&self) -> Option<&'a str> {
+        self.node.find(Name("a"))
+            .next()?.attr("href")
     }
 }
 

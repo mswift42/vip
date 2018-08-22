@@ -1,19 +1,9 @@
 [package]
 name = "vip"
-version = "0.1.0"
+version = "0.0.1"
 authors = ["mswift42 <martin.haesler@gmail.com>"]
 
 [dependencies]
 select = "0.4.2"
-reqwest = "0.7.3"
-error-chain = "0.11.0"
-serde = "1.0.14"
-serde_json = "1.0"
-serde_derive = "1.0"
-time = "0.1"
-chrono = { version = "0.4", features= ["serde"]}
-futures = "0.1.16"
-clippy = {version = "*", optional = true}
-
-[features]
-default = []
+url = "1.7.1"
+reqwest = "0.8.7"

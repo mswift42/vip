@@ -1,90 +1,163 @@
-#![feature(test, custom_attribute)]
-extern crate chrono;
-#[macro_use]
-extern crate error_chain;
 extern crate reqwest;
 extern crate select;
+extern crate url;
+
+use std::error;
+use std::fs;
+
 use select::document::Document;
-use select::node::Node;
-use select::predicate::{Attr, Class, Name, Predicate};
+use select::predicate::{Class, Name};
 
-#[macro_use]
-extern crate serde_derive;
-mod db;
-mod tv;
-fn main() {
-    //  PROFILER.lock().unwrap().start("mainprofile").unwrap();
-    //let doc = tv::IplayerDocument::new(include_str!("../testhtml/pop.html"));
-    //let progs = doc.programmes();
-    // PROFILER.lock().unwrap().stop().unwrap();
-    //let doc2 = Document::from(include_str!("../testhtml/comedy1.html"));
-    //    for node in doc2.find(Class("page").descendant(Name("a"))) {
-    //        println!("{:?}", node.attr("href"))
-    //    }
-    // let np =
-    //        doc2.find(Class("page").descendant(Name("a")))
-    //            .filter_map( |n| n.attr("href"));
-    //    for i in np {
-    //        println!("{}", i);
-    //    }
-    //    let pr = tv::IplayerDocument::new(include_str!("../testhtml/pop.html"));
-    //    println!("{:?}", pr.programmes());
-    run();
+pub trait DocumentLoader {
+    fn load(&self) -> BoxResult<IplayerDocument>;
 }
 
-#[async]
-fn fetch_documents() {}
+type BoxResult<T> = Result<T, Box<error::Error>>;
 
-fn run() -> reqwest::Result<()> {
-    let mpophtml = reqwest::get("http://www.bbc.co.uk/iplayer/group/most-popular")?;
-    let popdoc = Document::from_read(mpophtml).unwrap();
-    let idoc = tv::IplayerDocument { idoc: popdoc };
-    let programmes = idoc.programmes();
-    let titles: Vec<(&str, &str)> = programmes
-        .iter()
-        .map(|i| (&*i.title, &*i.synopsis))
-        .collect();
-    for i in titles {
-        println!("Programme: {:?}\n", i);
+pub struct IplayerDocument<'a> {
+    doc: Document,
+    url: &'a str,
+}
+
+pub struct BeebURL<'a> {
+    url: &'a str,
+}
+
+pub struct TestHTMLURL<'a> {
+    url: &'a str,
+}
+
+struct IplayerSelection<'a> {
+    prog: Option<Programme<'a>>,
+    programme_page: Option<&'a str>,
+}
+
+struct IplayerNode<'a> {
+    node: select::node::Node<'a>,
+}
+
+impl<'a> IplayerNode<'a> {
+    fn programme_node(&self) -> Option<IplayerNode> {
+       match self.node.find(Class("content-item")).next() {
+          None => None,
+           Some(nd) => Some(IplayerNode{node: nd}),
+       }
     }
-    let cat = tv::Category::new("mostpopular".to_string(), idoc.programmes());
-    let mut db = db::ProgrammeDB::new(vec![cat]);
-    db.save();
-    let db2 = db::ProgrammeDB::from_saved();
-    let comedyhtml = reqwest::get("http://www.bbc.co.uk/iplayer/categories/comedy/all?sort=atoz")?;
-    let comedydoc = Document::from_read(comedyhtml).unwrap();
-    let comedyidoc = tv::IplayerDocument { idoc: comedydoc };
-    let comedyprogrammes = comedyidoc.programmes();
-    let titles: Vec<(&str, &str)> = comedyprogrammes
-        .iter()
-        .map(|i| (&*i.title, &*i.synopsis))
-        .collect();
-    for i in titles {
-        println!("Programme: {:?}\n", i);
+
+    fn programme_site(&self) ->Option<&'a str> {
+        self.node.find(Class("lnk"))
+            .next()?.attr("href")
     }
-    println!("{:?}", db2);
-    Ok(())
+
+    fn title(&self) -> Option<String> {
+        match self.node.find(Class("content-item__title")).next() {
+            None => None,
+            Some(nd) => Some(nd.text()),
+        }
+
+    }
+
+    fn subtitle(&self) -> Option<String> {
+        match self.node.find(Class("content-item__info__primary"))
+            .next()?.descendants().next()?
+            .find(Class("content-item__description")).next() {
+            None => None,
+            Some(nd) => Some(nd.text()),
+        }
+    }
+
+    fn synopsis(&self) -> Option<String> {
+        match self.node.find(Class("content-item__info__secondary"))
+            .next()?.descendants().next()?
+            .find(Class("content-item__description")).next() {
+            None => None,
+            Some(nd) => Some(nd.text()),
+        }
+    }
+
+    fn url(&self) -> Option<&'a str> {
+        self.node.find(Name("a"))
+            .next()?.attr("href")
+    }
+
+    fn thumbnail(&self) -> Option<&'a str> {
+        match self.node.find(Class("rs-image")).next()
+            ?.descendants().next()?
+            .find(Class("picture")).next()?
+            .find(Class("source")).next()?
+            .attr("srcset") {
+            None => None,
+            Some(set) => set.split(' ').next()
+        }
+    }
+
+    fn available(&self) -> Option<String> {
+        match self.node.find(Class("content-item__sublabels")).next()
+        ?.descendants().next()?
+            .find(Name("span")).last() {
+            None => None,
+            Some(sp) => Some(sp.text()),
+        }
+    }
+
+    fn duration(&self) -> Option<String> {
+        match self.node.find(Class("content-item__sublabels")).next()
+            ?.descendants().next()?
+            .find(Name("span")).next() {
+            None => None,
+            Some(sp) => Some(sp.text()),
+        }
+    }
 }
 
-
-error_chain! {
-   foreign_links {
-       ReqError(reqwest::Error);
-       IoError(std::io::Error);
-   }
+pub struct Programme<'a> {
+    pub title: String,
+    pub subtitle: Option<String>,
+    pub synopsis: String,
+    pub thumbnail: &'a str,
+    pub url: &'a str,
+    pub index: usize,
+    pub available: String,
+    pub duration: String,
 }
 
-//fn run2() -> Result<()> {
-//    let res = reqwest::get("https://www.rust-lang.org/en-US/")?;
-//
-//    let document = Document::from_read(res)?;
-//
-//    let links = document.find(Name("a"))
-//        .filter_map(|n| n.attr("href"));
-//
-//    for link in links {
-//        println!("{}", link);
-//    }
-//
-//    Ok(())
-//}
+impl<'a> BeebURL<'a> {
+    fn load(&self) -> BoxResult<IplayerDocument> {
+        let uri = url::Url::parse(self.url)?;
+        let resp = reqwest::get(uri)?;
+        let doc = select::document::Document::from_read(resp)?;
+        Ok(IplayerDocument {
+            doc,
+            url: self.url,
+        })
+    }
+}
+
+impl<'a> TestHTMLURL<'a> {
+    fn load(&self) -> BoxResult<IplayerDocument> {
+        let html = fs::read(self.url)?;
+        let doc = Document::from_read(&html[..])?;
+        Ok(IplayerDocument {
+            doc,
+            url: self.url,
+        })
+    }
+}
+
+fn main() {}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::path::PathBuf;
+    #[test]
+    fn test_load() {
+        let mut d = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        d.push("testhtml");
+        let tu = TestHTMLURL {
+            url: "testhtml/films1.html",
+        };
+        let id = tu.load();
+        assert!(id.is_ok());
+    }
+}

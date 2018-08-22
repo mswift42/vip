@@ -121,6 +121,29 @@ pub struct Programme<'a> {
     pub duration: String,
 }
 
+impl<'a> Programme<'a> {
+    fn new(inode: IplayerNode) -> Programme {
+        let title = inode.title().unwrap();
+        let subtitle = inode.subtitle().unwrap_or("".to_string());
+        let synopsis = inode.synopsis.unwrap();
+        let url = inode.url().unwrap();
+        let thumbnail = inode.thumbnail().unwrap();
+        let available = inode.available().unwrap();
+        let duration = inode.duration().unwrap();
+        let index = 0;
+        Programme{
+            title,
+            subtitle,
+            synopsis,
+            thumbnail,
+            url,
+            index,
+            available,
+            duration,
+        }
+    }
+}
+
 impl<'a> BeebURL<'a> {
     fn load(&self) -> BoxResult<IplayerDocument> {
         let uri = url::Url::parse(self.url)?;

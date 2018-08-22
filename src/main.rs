@@ -124,8 +124,8 @@ pub struct Programme<'a> {
 impl<'a> Programme<'a> {
     fn new(inode: IplayerNode) -> Programme {
         let title = inode.title().unwrap();
-        let subtitle = inode.subtitle().unwrap_or("".to_string());
-        let synopsis = inode.synopsis.unwrap();
+        let subtitle = inode.subtitle();
+        let synopsis = inode.synopsis().unwrap();
         let url = inode.url().unwrap();
         let thumbnail = inode.thumbnail().unwrap();
         let available = inode.available().unwrap();

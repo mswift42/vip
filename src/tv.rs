@@ -126,10 +126,6 @@ impl<'a> IplayerDocument {
 }
 
 fn program_page(node: &Node) -> String {
-    //    for node in self.idoc.find(Class("view-more-container")) {
-    //        let sub = node.attr("href").unwrap().to_string();
-    //        results.push(String::from("http://www.bbc.co.uk") + &sub);
-    //    }
     node.find(Class("view-more-container"))
         .next()
         .unwrap()

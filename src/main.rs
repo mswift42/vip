@@ -209,5 +209,7 @@ mod tests {
         let doc = id.unwrap();
         let pn = doc.programme_node();
         assert!(pn.is_some());
+        let tit = pn.unwrap().title().unwrap();
+        assert_eq!(tit, "Adam Curtis");
     }
 }

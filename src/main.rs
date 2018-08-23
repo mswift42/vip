@@ -37,16 +37,15 @@ struct IplayerNode<'a> {
 }
 
 impl<'a> IplayerNode<'a> {
-    fn programme_node(&self) -> Option<IplayerNode> {
-       match self.node.find(Class("content-item")).next() {
-          None => None,
-           Some(nd) => Some(IplayerNode{node: nd}),
-       }
+    fn programme_node(idoc: &'a IplayerDocument) -> Option<IplayerNode<'a>> {
+        match &idoc.doc.find(Class("content-item")).next() {
+            None => None,
+            Some(nd) => Some(IplayerNode { node: *nd }),
+        }
     }
 
-    fn programme_site(&self) ->Option<&'a str> {
-        self.node.find(Class("lnk"))
-            .next()?.attr("href")
+    fn programme_site(&self) -> Option<&'a str> {
+        self.node.find(Class("lnk")).next()?.attr("href")
     }
 
     fn title(&self) -> Option<String> {
@@ -54,56 +53,85 @@ impl<'a> IplayerNode<'a> {
             None => None,
             Some(nd) => Some(nd.text()),
         }
-
     }
 
     fn subtitle(&self) -> Option<String> {
-        match self.node.find(Class("content-item__info__primary"))
-            .next()?.descendants().next()?
-            .find(Class("content-item__description")).next() {
+        match self
+            .node
+            .find(Class("content-item__info__primary"))
+            .next()?
+            .descendants()
+            .next()?
+            .find(Class("content-item__description"))
+            .next()
+        {
             None => None,
             Some(nd) => Some(nd.text()),
         }
     }
 
     fn synopsis(&self) -> Option<String> {
-        match self.node.find(Class("content-item__info__secondary"))
-            .next()?.descendants().next()?
-            .find(Class("content-item__description")).next() {
+        match self
+            .node
+            .find(Class("content-item__info__secondary"))
+            .next()?
+            .descendants()
+            .next()?
+            .find(Class("content-item__description"))
+            .next()
+        {
             None => None,
             Some(nd) => Some(nd.text()),
         }
     }
 
     fn url(&self) -> Option<&'a str> {
-        self.node.find(Name("a"))
-            .next()?.attr("href")
+        self.node.find(Name("a")).next()?.attr("href")
     }
 
     fn thumbnail(&self) -> Option<&'a str> {
-        match self.node.find(Class("rs-image")).next()
-            ?.descendants().next()?
-            .find(Class("picture")).next()?
-            .find(Class("source")).next()?
-            .attr("srcset") {
+        match self
+            .node
+            .find(Class("rs-image"))
+            .next()?
+            .descendants()
+            .next()?
+            .find(Class("picture"))
+            .next()?
+            .find(Class("source"))
+            .next()?
+            .attr("srcset")
+        {
             None => None,
-            Some(set) => set.split(' ').next()
+            Some(set) => set.split(' ').next(),
         }
     }
 
     fn available(&self) -> Option<String> {
-        match self.node.find(Class("content-item__sublabels")).next()
-        ?.descendants().next()?
-            .find(Name("span")).last() {
+        match self
+            .node
+            .find(Class("content-item__sublabels"))
+            .next()?
+            .descendants()
+            .next()?
+            .find(Name("span"))
+            .last()
+        {
             None => None,
             Some(sp) => Some(sp.text()),
         }
     }
 
     fn duration(&self) -> Option<String> {
-        match self.node.find(Class("content-item__sublabels")).next()
-            ?.descendants().next()?
-            .find(Name("span")).next() {
+        match self
+            .node
+            .find(Class("content-item__sublabels"))
+            .next()?
+            .descendants()
+            .next()?
+            .find(Name("span"))
+            .next()
+        {
             None => None,
             Some(sp) => Some(sp.text()),
         }
@@ -131,7 +159,7 @@ impl<'a> Programme<'a> {
         let available = inode.available().unwrap();
         let duration = inode.duration().unwrap();
         let index = 0;
-        Programme{
+        Programme {
             title,
             subtitle,
             synopsis,
@@ -149,10 +177,7 @@ impl<'a> BeebURL<'a> {
         let uri = url::Url::parse(self.url)?;
         let resp = reqwest::get(uri)?;
         let doc = select::document::Document::from_read(resp)?;
-        Ok(IplayerDocument {
-            doc,
-            url: self.url,
-        })
+        Ok(IplayerDocument { doc, url: self.url })
     }
 }
 
@@ -160,10 +185,7 @@ impl<'a> TestHTMLURL<'a> {
     fn load(&self) -> BoxResult<IplayerDocument> {
         let html = fs::read(self.url)?;
         let doc = Document::from_read(&html[..])?;
-        Ok(IplayerDocument {
-            doc,
-            url: self.url,
-        })
+        Ok(IplayerDocument { doc, url: self.url })
     }
 }
 
@@ -182,5 +204,6 @@ mod tests {
         };
         let id = tu.load();
         assert!(id.is_ok());
+        let doc = id.unwrap();
     }
 }

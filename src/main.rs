@@ -19,6 +19,15 @@ pub struct IplayerDocument<'a> {
     url: &'a str,
 }
 
+impl<'a> IplayerDocument<'a> {
+    fn programme_node(&self) -> Option<IplayerNode> {
+        match self.doc.find(Class("content-item")).next() {
+            None => None,
+            Some(nd) => Some(IplayerNode{node: nd})
+        }
+    }
+}
+
 pub struct BeebURL<'a> {
     url: &'a str,
 }
@@ -37,13 +46,6 @@ struct IplayerNode<'a> {
 }
 
 impl<'a> IplayerNode<'a> {
-    fn programme_node(idoc: &'a IplayerDocument) -> Option<IplayerNode<'a>> {
-        match &idoc.doc.find(Class("content-item")).next() {
-            None => None,
-            Some(nd) => Some(IplayerNode { node: *nd }),
-        }
-    }
-
     fn programme_site(&self) -> Option<&'a str> {
         self.node.find(Class("lnk")).next()?.attr("href")
     }
@@ -205,5 +207,7 @@ mod tests {
         let id = tu.load();
         assert!(id.is_ok());
         let doc = id.unwrap();
+        let pn = doc.programme_node();
+        assert!(pn.is_some());
     }
 }

@@ -156,9 +156,7 @@ pub struct Programme<'a> {
 }
 
 impl<'a> Programme<'a> {
-    fn new(inode: IplayerNode) -> Programme {
-        let title = inode.title().unwrap();
-        let subtitle = inode.subtitle();
+    fn new(title: String, subtitle: String, inode: IplayerNode) -> Programme {
         let synopsis = inode.synopsis().unwrap();
         let url = inode.url().unwrap();
         let thumbnail = inode.thumbnail().unwrap();

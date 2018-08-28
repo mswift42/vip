@@ -23,7 +23,7 @@ impl<'a> IplayerDocument<'a> {
     fn programme_node(&self) -> Option<IplayerNode> {
         match self.doc.find(Class("content-item")).next() {
             None => None,
-            Some(nd) => Some(IplayerNode{node: nd})
+            Some(nd) => Some(IplayerNode { node: nd }),
         }
     }
 }
@@ -34,6 +34,10 @@ pub struct BeebURL<'a> {
 
 pub struct TestHTMLURL<'a> {
     url: &'a str,
+}
+
+struct ProgrammePage<'a> {
+    idoc:  IplayerDocument<'a>
 }
 
 struct IplayerSelection<'a> {
@@ -209,7 +213,5 @@ mod tests {
         let doc = id.unwrap();
         let pn = doc.programme_node();
         assert!(pn.is_some());
-        let tit = pn.unwrap().title().unwrap();
-        assert_eq!(tit, "Adam Curtis");
     }
 }

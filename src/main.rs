@@ -20,11 +20,13 @@ pub struct IplayerDocument<'a> {
 }
 
 impl<'a> IplayerDocument<'a> {
-    fn programme_node(&self) -> Option<IplayerNode> {
-        match self.doc.find(Class("content-item")).next() {
-            None => None,
-            Some(nd) => Some(IplayerNode { node: nd }),
-        }
+    fn programme_nodes(&self) -> Vec<Option<IplayerNode>> {
+        self.doc
+            .find(Class("content-item"))
+            .map(|nd| match nd.next() {
+                None => None,
+                Some(nod) => Some(IplayerNode { node: nod }),
+            }).collect()
     }
 }
 
@@ -37,7 +39,7 @@ pub struct TestHTMLURL<'a> {
 }
 
 struct ProgrammePage<'a> {
-    idoc:  IplayerDocument<'a>
+    idoc: IplayerDocument<'a>,
 }
 
 struct IplayerSelection<'a> {
@@ -156,7 +158,7 @@ pub struct Programme<'a> {
 }
 
 impl<'a> Programme<'a> {
-    fn new(title: String, subtitle: String, inode: IplayerNode) -> Programme {
+    fn new(title: String, subtitle: Option<String>, inode: IplayerNode) -> Programme {
         let synopsis = inode.synopsis().unwrap();
         let url = inode.url().unwrap();
         let thumbnail = inode.thumbnail().unwrap();
@@ -209,7 +211,7 @@ mod tests {
         let id = tu.load();
         assert!(id.is_ok());
         let doc = id.unwrap();
-        let pn = doc.programme_node();
-        assert!(pn.is_some());
+        let pn = doc.programme_nodes();
+        assert!(pn.len() > 0);
     }
 }

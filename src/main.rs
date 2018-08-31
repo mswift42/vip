@@ -47,6 +47,18 @@ struct IplayerSelection<'a> {
     programme_page: Option<&'a str>,
 }
 
+impl<'a> IplayerSelection<'a> {
+    fn new(inode: IplayerNode<'a>) -> IplayerSelection<'a> {
+        let title = inode.title().unwrap_or("".to_string());
+        let subtitle = inode.subtitle();
+        match inode.programme_site() {
+            None => IplayerSelection{prog: Some(Programme::new(title, subtitle, inode)),
+            programme_page: None},
+            Some(u) => IplayerSelection{prog: None, programme_page: Some(u)}
+        }
+    }
+}
+
 struct IplayerNode<'a> {
     node: select::node::Node<'a>,
 }

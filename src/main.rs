@@ -190,6 +190,25 @@ impl<'a> Programme<'a> {
     }
 }
 
+impl<'a> ProgrammePage<'a> {
+    fn programmes(&self) -> Vec<Programme<'a>> {
+        let title = match self.idoc.doc.find(Class("hero-header__title"))
+            .next() {
+            None => "".to_string(),
+            Some(nd) => nd.text(),
+        };
+       self.idoc.programme_nodes().iter().map(|inode| match inode {
+           None => None,
+           Some(nd)=>  {
+               let subtitle = nd.subtitle();
+                return  Programme::new(title, subtitle, *nd)
+           }
+       }
+
+       ).collect()
+    }
+}
+
 impl<'a> BeebURL<'a> {
     fn load(&self) -> BoxResult<IplayerDocument> {
         let uri = url::Url::parse(self.url)?;
@@ -218,12 +237,12 @@ mod tests {
         let mut d = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         d.push("testhtml");
         let tu = TestHTMLURL {
-            url: "testhtml/films1.html",
+            url: "testhtml/food1.html",
         };
         let id = tu.load();
         assert!(id.is_ok());
         let doc = id.unwrap();
-        let pn = doc.programme_nodes();
-        assert!(pn.len() > 0);
+        let pn = &doc.programme_nodes();
+        assert_eq!(pn.len(), 26);
     }
 }

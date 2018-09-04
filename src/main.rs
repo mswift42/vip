@@ -20,7 +20,7 @@ pub struct IplayerDocument<'a> {
 }
 
 impl<'a> IplayerDocument<'a> {
-    fn programme_nodes(&self) -> Vec<Option<IplayerNode<'a>>> {
+    fn programme_nodes(&self) -> Vec<Option<IplayerNode>> {
         self.doc
             .find(Class("content-item"))
             .map(|nd| match nd.next() {
@@ -200,13 +200,10 @@ impl<'a> ProgrammePage<'a> {
         let prognodes = self.idoc.programme_nodes().iter();
         let mut results = vec![];
         for inode in prognodes {
-            match inode {
-               None => continue,
-                Some(nd) => {
-                    let subtitle = nd.subtitle();
-                    results.push(Programme::new(title, subtitle, *nd))
-                }
-            };
+            if let Some(nd) = inode {
+                let subtitle = nd.subtitle();
+                results.push(Programme::new(title, subtitle, *nd))
+            }
         }
         results
     }

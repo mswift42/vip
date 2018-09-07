@@ -191,21 +191,21 @@ impl<'a> Programme<'a> {
 }
 
 impl<'a> ProgrammePage<'a> {
-    fn programmes(&self) -> Vec<Programme<'a>> {
+    fn programmes(&self) -> Vec<Option<Programme<'a>>> {
         let title = match self.idoc.doc.find(Class("hero-header__title"))
             .next() {
             None => "".to_string(),
             Some(nd) => nd.text(),
         };
-        let prognodes = self.idoc.programme_nodes().iter();
-        let mut results = vec![];
-        for inode in prognodes {
-            if let Some(nd) = inode {
-                let subtitle = nd.subtitle();
-                results.push(Programme::new(title, subtitle, *nd))
-            }
-        }
-        results
+        self.idoc.doc.find(Class("content-item"))
+            .map(|nd| match nd.next() {
+                None => None,
+                Some(node) => {
+                    let inode = IplayerNode{node};
+                    let subtitle = inode.subtitle();
+                return  Some(Programme::new(title, subtitle, inode))
+                }
+            }).collect()
     }
 }
 

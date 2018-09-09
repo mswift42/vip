@@ -159,14 +159,14 @@ impl<'a> IplayerNode<'a> {
 }
 
 pub struct Programme<'a> {
-    pub title: String,
+    pub title: Option<String>,
     pub subtitle: Option<String>,
-    pub synopsis: String,
-    pub thumbnail: &'a str,
-    pub url: &'a str,
+    pub synopsis: Option<String>,
+    pub thumbnail: Option<&'a str>,
+    pub url: Option<&'a str>,
     pub index: usize,
-    pub available: String,
-    pub duration: String,
+    pub available: Option<String>,
+    pub duration: Option<String>,
 }
 
 impl<'a> Programme<'a> {
@@ -191,7 +191,7 @@ impl<'a> Programme<'a> {
 }
 
 impl<'a> ProgrammePage<'a> {
-    fn programmes(&self) -> Vec<Option<Programme<'a>>> {
+    fn programmes<'d, 'b: 'd>(&self) -> Vec<Option<Programme<'a>>> {
         let title = match self.idoc.doc.find(Class("hero-header__title"))
             .next() {
             None => "".to_string(),

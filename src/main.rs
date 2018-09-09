@@ -49,7 +49,7 @@ struct IplayerSelection<'a> {
 
 impl<'a> IplayerSelection<'a> {
     fn new(inode: IplayerNode<'a>) -> IplayerSelection<'a> {
-        let title = inode.title().unwrap_or("".to_string());
+        let title = inode.title();
         let subtitle = inode.subtitle();
         match inode.programme_site() {
             None => IplayerSelection{prog: Some(Programme::new(title, subtitle, inode)),
@@ -170,12 +170,12 @@ pub struct Programme<'a> {
 }
 
 impl<'a> Programme<'a> {
-    fn new(title: String, subtitle: Option<String>, inode: IplayerNode) -> Programme {
-        let synopsis = inode.synopsis().unwrap();
-        let url = inode.url().unwrap();
-        let thumbnail = inode.thumbnail().unwrap();
-        let available = inode.available().unwrap();
-        let duration = inode.duration().unwrap();
+    fn new(title: Option<String>, subtitle: Option<String>, inode: IplayerNode) -> Programme {
+        let synopsis = inode.synopsis();
+        let url = inode.url();
+        let thumbnail = inode.thumbnail();
+        let available = inode.available();
+        let duration = inode.duration();
         let index = 0;
         Programme {
             title,
@@ -194,8 +194,8 @@ impl<'a> ProgrammePage<'a> {
     fn programmes<'d, 'b: 'd>(&self) -> Vec<Option<Programme<'a>>> {
         let title = match self.idoc.doc.find(Class("hero-header__title"))
             .next() {
-            None => "".to_string(),
-            Some(nd) => nd.text(),
+            None => None,
+            Some(nd) => Some(nd.text()),
         };
         self.idoc.doc.find(Class("content-item"))
             .map(|nd| match nd.next() {

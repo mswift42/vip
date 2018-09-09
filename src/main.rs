@@ -6,6 +6,7 @@ use std::error;
 use std::fs;
 
 use select::document::Document;
+use select::node::Node;
 use select::predicate::{Class, Name};
 
 pub trait DocumentLoader {
@@ -191,23 +192,27 @@ impl<'a> Programme<'a> {
 }
 
 impl<'a> ProgrammePage<'a> {
-    fn programmes<'d, 'b: 'd>(&self) -> Vec<Option<Programme<'a>>> {
+    fn programmes(&self) -> Vec<Option<Programme>> {
         let title = match self.idoc.doc.find(Class("hero-header__title"))
             .next() {
             None => None,
             Some(nd) => Some(nd.text()),
         };
         self.idoc.doc.find(Class("content-item"))
-            .map(|nd| match nd.next() {
-                None => None,
-                Some(node) => {
-                    let inode = IplayerNode{node};
-                    let subtitle = inode.subtitle();
-                return  Some(Programme::new(title, subtitle, inode))
-                }
-            }).collect()
+            .flat_map(move |node| ProgrammePage::programme(title, node.next())).collect()
+    }
+    fn programme(title: Option<String>, node: Option<Node>) -> Option<Programme> {
+        match node {
+            None => None,
+            Some(nod) => {
+                let inode = IplayerNode{node: nod};
+               Some(Programme::new(title, inode.subtitle(), inode))
+            }
+        }
     }
 }
+
+
 
 impl<'a> BeebURL<'a> {
     fn load(&self) -> BoxResult<IplayerDocument> {

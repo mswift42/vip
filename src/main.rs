@@ -199,7 +199,7 @@ impl<'a> ProgrammePage<'a> {
             Some(nd) => Some(nd.text()),
         };
         self.idoc.doc.find(Class("content-item"))
-            .flat_map(move |node| ProgrammePage::programme(title, node.next())).collect()
+            .map(|node| ProgrammePage::programme(title.clone(), node.next())).collect()
     }
     fn programme(title: Option<String>, node: Option<Node>) -> Option<Programme> {
         match node {

@@ -270,4 +270,17 @@ mod tests {
         let progs = progpage.programmes();
         assert_eq!(progs.len(), 10);
     }
+
+    #[test]
+    fn test_iplayer_selections() {
+        let mut d = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        d.push("testhtml");
+        let tu = TestHTMLURL{url: "testhtml/films1.html"};
+        let idr = tu.load();
+        assert!(idr.is_ok());
+        let id = idr.unwrap();
+        let inode = IplayerNode{node: id.doc.find(Class("content-item")).next().unwrap()};
+        let isels = inode.iplayer_selections();
+        assert_eq!(isels.len(), 24);
+    }
 }

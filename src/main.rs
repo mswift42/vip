@@ -157,6 +157,13 @@ impl<'a> IplayerNode<'a> {
             Some(sp) => Some(sp.text()),
         }
     }
+    fn iplayer_selections(&self) -> Vec<IplayerSelection<'a>> {
+        let mut results = vec![];
+        for node in self.node.next() {
+            results.push(IplayerSelection::new(IplayerNode{node}));
+        }
+        results
+    }
 }
 
 pub struct Programme<'a> {

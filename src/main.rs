@@ -1,6 +1,7 @@
 extern crate reqwest;
 extern crate select;
 extern crate url;
+use std::path::PathBuf;
 
 use std::error;
 use std::fs;
@@ -53,9 +54,14 @@ impl<'a> IplayerSelection<'a> {
         let title = inode.title();
         let subtitle = inode.subtitle();
         match inode.programme_site() {
-            None => IplayerSelection{prog: Some(Programme::new(title, subtitle, inode)),
-            programme_page: None},
-            Some(u) => IplayerSelection{prog: None, programme_page: Some(u)}
+            None => IplayerSelection {
+                prog: Some(Programme::new(title, subtitle, inode)),
+                programme_page: None,
+            },
+            Some(u) => IplayerSelection {
+                prog: None,
+                programme_page: Some(u),
+            },
         }
     }
 }
@@ -158,11 +164,10 @@ impl<'a> IplayerNode<'a> {
         }
     }
     fn iplayer_selections(&self) -> Vec<IplayerSelection<'a>> {
-        let mut results = vec![];
-        for node in self.node.next() {
-            results.push(IplayerSelection::new(IplayerNode{node}));
-        }
-        results
+        self.node
+            .descendants()
+            .map(|node| IplayerSelection::new(IplayerNode { node }))
+            .collect()
     }
 }
 
@@ -200,26 +205,26 @@ impl<'a> Programme<'a> {
 
 impl<'a> ProgrammePage<'a> {
     fn programmes(&self) -> Vec<Option<Programme>> {
-        let title = match self.idoc.doc.find(Class("hero-header__title"))
-            .next() {
+        let title = match self.idoc.doc.find(Class("hero-header__title")).next() {
             None => None,
             Some(nd) => Some(nd.text()),
         };
-        self.idoc.doc.find(Class("content-item"))
-            .map(move |node| ProgrammePage::programme(title.clone(), node.next())).collect()
+        self.idoc
+            .doc
+            .find(Class("content-item"))
+            .map(move |node| ProgrammePage::programme(title.clone(), node.next()))
+            .collect()
     }
     fn programme(title: Option<String>, node: Option<Node>) -> Option<Programme> {
         match node {
             None => None,
             Some(nod) => {
-                let inode = IplayerNode{node: nod};
-               Some(Programme::new(title, inode.subtitle(), inode))
+                let inode = IplayerNode { node: nod };
+                Some(Programme::new(title, inode.subtitle(), inode))
             }
         }
     }
 }
-
-
 
 impl<'a> BeebURL<'a> {
     fn load(&self) -> BoxResult<IplayerDocument> {
@@ -238,7 +243,21 @@ impl<'a> TestHTMLURL<'a> {
     }
 }
 
-fn main() {}
+fn main() {
+    let mut d = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+    d.push("testhtml");
+    let tu = TestHTMLURL {
+        url: "testhtml/films1.html",
+    };
+    let idr = tu.load();
+    assert!(idr.is_ok());
+    let id = idr.unwrap();
+    let inode = IplayerNode {
+        node: id.doc.find(Class("content-item")).next().unwrap(),
+    };
+    let isels = inode.iplayer_selections();
+    assert_eq!(isels.len(), 24);
+}
 
 #[cfg(test)]
 mod tests {
@@ -251,6 +270,19 @@ mod tests {
         let tu = TestHTMLURL {
             url: "testhtml/food1.html",
         };
+        let mut d = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        d.push("testhtml");
+        let tu = TestHTMLURL {
+            url: "testhtml/films1.html",
+        };
+        let idr = tu.load();
+        assert!(idr.is_ok());
+        let id = idr.unwrap();
+        let inode = IplayerNode {
+            node: id.doc.find(Class("content-item")).next().unwrap(),
+        };
+        let isels = inode.iplayer_selections();
+        assert_eq!(isels.len(), 24);
         let id = tu.load();
         assert!(id.is_ok());
         let doc = id.unwrap();
@@ -262,11 +294,13 @@ mod tests {
     fn test_programme_page() {
         let mut d = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         d.push("testhtml");
-        let tu = TestHTMLURL { url: "testhtml/delia_smiths_cookery_course.html"};
+        let tu = TestHTMLURL {
+            url: "testhtml/delia_smiths_cookery_course.html",
+        };
         let idr = tu.load();
         assert!(idr.is_ok());
         let id = idr.unwrap();
-        let progpage = ProgrammePage{idoc: id};
+        let progpage = ProgrammePage { idoc: id };
         let progs = progpage.programmes();
         assert_eq!(progs.len(), 10);
     }
@@ -275,11 +309,15 @@ mod tests {
     fn test_iplayer_selections() {
         let mut d = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         d.push("testhtml");
-        let tu = TestHTMLURL{url: "testhtml/films1.html"};
+        let tu = TestHTMLURL {
+            url: "testhtml/films1.html",
+        };
         let idr = tu.load();
         assert!(idr.is_ok());
         let id = idr.unwrap();
-        let inode = IplayerNode{node: id.doc.find(Class("content-item")).next().unwrap()};
+        let inode = IplayerNode {
+            node: id.doc.find(Class("content-item")).next().unwrap(),
+        };
         let isels = inode.iplayer_selections();
         assert_eq!(isels.len(), 24);
     }

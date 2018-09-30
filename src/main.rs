@@ -318,6 +318,11 @@ mod tests {
         let tu = TestHTMLURL {
             url: "testhtml/films1.html"
         };
+        let idr = tu.load();
+        assert!(idr.is_ok());
+        let id = idr.unwrap();
+        let nodes = id.doc.find(Class("content-item"));
+        assert_eq!(nodes.count(), 24);
     }
 
     #[test]

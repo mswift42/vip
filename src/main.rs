@@ -280,11 +280,6 @@ mod tests {
         let mut d = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         d.push("testhtml");
         let tu = TestHTMLURL {
-            url: "testhtml/food1.html",
-        };
-        let mut d = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-        d.push("testhtml");
-        let tu = TestHTMLURL {
             url: "testhtml/films1.html",
         };
         let idr = tu.load();
@@ -315,6 +310,14 @@ mod tests {
         let progpage = ProgrammePage { idoc: id };
         let progs = progpage.programmes();
         assert_eq!(progs.len(), 10);
+    }
+    #[test]
+    fn test_programme_site() {
+        let mut d = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        d.push("testhtml");
+        let tu = TestHTMLURL {
+            url: "testhtml/films1.html"
+        };
     }
 
     #[test]

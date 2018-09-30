@@ -327,10 +327,7 @@ mod tests {
         let idr = tu.load();
         assert!(idr.is_ok());
         let id = idr.unwrap();
-        let inode = IplayerNode {
-            node: id.doc.find(Class("content-item")).next().unwrap()
-        };
-        let isels = inode.iplayer_selections();
+        let isels = id.iplayer_selections();
         assert_eq!(isels.len(), 24);
     }
 }

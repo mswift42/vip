@@ -284,17 +284,6 @@ mod tests {
         };
         let idr = tu.load();
         assert!(idr.is_ok());
-        let id = idr.unwrap();
-        let inode = IplayerNode {
-            node: id.doc.find(Class("content-item")).next().unwrap(),
-        };
-        let isels = inode.iplayer_selections();
-        assert_eq!(isels.len(), 24);
-        let id = tu.load();
-        assert!(id.is_ok());
-        let doc = id.unwrap();
-        let pn = &doc.programme_nodes();
-        assert_eq!(pn.len(), 26);
     }
 
     #[test]

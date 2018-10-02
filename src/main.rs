@@ -1,6 +1,7 @@
 extern crate reqwest;
 extern crate select;
 extern crate url;
+
 use std::path::PathBuf;
 
 use std::error;
@@ -35,7 +36,7 @@ impl<'a> IplayerDocument<'a> {
 impl<'a> IplayerDocument<'a> {
     fn iplayer_selections(&self) -> Vec<IplayerSelection> {
         self.doc.find(Class("content-item")).into_iter()
-            .map(|node| IplayerSelection::new(IplayerNode{node})).collect()
+            .map(|node| IplayerSelection::new(IplayerNode { node })).collect()
     }
 }
 
@@ -98,10 +99,10 @@ impl<'a> IplayerNode<'a> {
             .next()?
             .find(Class("content-item__description"))
             .next()
-        {
-            None => None,
-            Some(nd) => Some(nd.text()),
-        }
+            {
+                None => None,
+                Some(nd) => Some(nd.text()),
+            }
     }
 
     fn synopsis(&self) -> Option<String> {
@@ -113,10 +114,10 @@ impl<'a> IplayerNode<'a> {
             .next()?
             .find(Class("content-item__description"))
             .next()
-        {
-            None => None,
-            Some(nd) => Some(nd.text()),
-        }
+            {
+                None => None,
+                Some(nd) => Some(nd.text()),
+            }
     }
 
     fn url(&self) -> Option<&'a str> {
@@ -135,10 +136,10 @@ impl<'a> IplayerNode<'a> {
             .find(Class("source"))
             .next()?
             .attr("srcset")
-        {
-            None => None,
-            Some(set) => set.split(' ').next(),
-        }
+            {
+                None => None,
+                Some(set) => set.split(' ').next(),
+            }
     }
 
     fn available(&self) -> Option<String> {
@@ -150,10 +151,10 @@ impl<'a> IplayerNode<'a> {
             .next()?
             .find(Name("span"))
             .last()
-        {
-            None => None,
-            Some(sp) => Some(sp.text()),
-        }
+            {
+                None => None,
+                Some(sp) => Some(sp.text()),
+            }
     }
 
     fn duration(&self) -> Option<String> {
@@ -165,10 +166,10 @@ impl<'a> IplayerNode<'a> {
             .next()?
             .find(Name("span"))
             .next()
-        {
-            None => None,
-            Some(sp) => Some(sp.text()),
-        }
+            {
+                None => None,
+                Some(sp) => Some(sp.text()),
+            }
     }
     fn iplayer_selections(&self) -> Vec<IplayerSelection<'a>> {
 //        let mut selections = vec![];
@@ -178,7 +179,7 @@ impl<'a> IplayerNode<'a> {
 //        }
 //        selections
         self.node.children()
-            .map(|node| IplayerSelection::new(IplayerNode{node}))
+            .map(|node| IplayerSelection::new(IplayerNode { node }))
             .collect()
     }
 }
@@ -275,6 +276,7 @@ fn main() {
 mod tests {
     use super::*;
     use std::path::PathBuf;
+
     #[test]
     fn test_load() {
         let mut d = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
@@ -300,6 +302,7 @@ mod tests {
         let progs = progpage.programmes();
         assert_eq!(progs.len(), 10);
     }
+
     #[test]
     fn test_programme_site() {
         let mut d = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
@@ -311,8 +314,8 @@ mod tests {
         assert!(idr.is_ok());
         let id = idr.unwrap();
         let nodes = id.doc.find(Class("content-item"));
-        let sites: Vec<IplayerNode> = nodes.filter(|node| IplayerNode{node: *node}.programme_site().is_some())
-            .map(|node| IplayerNode{node: node}).collect();
+        let sites: Vec<IplayerNode> = nodes.filter(|node| IplayerNode { node: *node }.programme_site().is_some())
+            .map(|node| IplayerNode { node: node }).collect();
         assert_eq!(sites.len(), 2);
         assert_eq!(sites[0].programme_site().unwrap(), "testhtml/adam_curtis.html");
         assert_eq!(sites[1].programme_site().unwrap(), "testhtml/storyville.html");
@@ -331,10 +334,10 @@ mod tests {
         let isels = id.iplayer_selections();
         assert_eq!(isels.len(), 24);
         let prog_sites = isels.iter().filter(|sel|
-        sel.programme_page.is_some());
+            sel.programme_page.is_some());
         assert_eq!(prog_sites.count(), 2);
         let progs = isels.iter().filter(|sel|
-        sel.prog.is_some());
+            sel.prog.is_some());
         assert_eq!(progs.count(), 22);
     }
 }

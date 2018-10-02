@@ -314,7 +314,8 @@ mod tests {
         let sites: Vec<IplayerNode> = nodes.filter(|node| IplayerNode{node: *node}.programme_site().is_some())
             .map(|node| IplayerNode{node: node}).collect();
         assert_eq!(sites.len(), 2);
-        assert_eq!(sites[0].unwrap(), "");
+        assert_eq!(sites[0].programme_site().unwrap(), "testhtml/adam_curtis.html");
+        assert_eq!(sites[1].programme_site().unwrap(), "testhtml/storyville.html");
     }
 
     #[test]

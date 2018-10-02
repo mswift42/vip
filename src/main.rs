@@ -311,7 +311,10 @@ mod tests {
         assert!(idr.is_ok());
         let id = idr.unwrap();
         let nodes = id.doc.find(Class("content-item"));
-        assert_eq!(nodes.count(), 24);
+        let sites: Vec<IplayerNode> = nodes.filter(|node| IplayerNode{node: *node}.programme_site().is_some())
+            .map(|node| IplayerNode{node: node}).collect();
+        assert_eq!(sites.len(), 2);
+        assert_eq!(sites[0].unwrap(), "");
     }
 
     #[test]

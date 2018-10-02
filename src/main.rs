@@ -330,5 +330,11 @@ mod tests {
         let id = idr.unwrap();
         let isels = id.iplayer_selections();
         assert_eq!(isels.len(), 24);
+        let prog_sites = isels.iter().filter(|sel|
+        sel.programme_page.is_some());
+        assert_eq!(prog_sites.count(), 2);
+        let progs = isels.iter().filter(|sel|
+        sel.prog.is_some());
+        assert_eq!(progs.count(), 22);
     }
 }

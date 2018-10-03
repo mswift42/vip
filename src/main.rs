@@ -319,6 +319,18 @@ mod tests {
         assert_eq!(sites.len(), 2);
         assert_eq!(sites[0].programme_site().unwrap(), "testhtml/adam_curtis.html");
         assert_eq!(sites[1].programme_site().unwrap(), "testhtml/storyville.html");
+        let tu = TestHTMLURL{url: "testhtml/food1.html"};
+        let idr = tu.load();
+        assert!(idr.is_ok());
+        let id = idr.unwrap();
+        let nodes = id.doc.find(Class("content-item"));
+        let sites: Vec<IplayerNode> = nodes.filter(|node| IplayerNode{node: *node}.programme_site().is_some())
+            .map(|node| IplayerNode{node}).collect();
+        assert_eq!(sites.len(), 20);
+        assert_eq!(sites[0].programme_site().unwrap(), "testhtml/britains_best_home_cook.html");
+        assert_eq!(sites[1].programme_site().unwrap(), "testhtml/britains_fat_fight.html");
+        assert_eq!(sites[2].programme_site().unwrap(), "testhtml/caribbean_food_made_easy.html");
+        assert_eq!(sites[3].programme_site().unwrap(), "testhtml/delia_smiths_cookery_course.html");
     }
 
     #[test]

@@ -351,5 +351,15 @@ mod tests {
         let progs = isels.iter().filter(|sel|
             sel.prog.is_some());
         assert_eq!(progs.count(), 22);
+        let tu = TestHTMLURL{url: "testhtml/food1.html"};
+        let idr = tu.load();
+        assert!(idr.is_ok());
+        let id = idr.unwrap();
+        let isel = id.iplayer_selections();
+        assert_eq!(isel.len(), 26);
+        let prog_sites = isel.iter().filter(|sel| sel.programme_page.is_some());
+        assert_eq!(prog_sites.count(), 20);
+        let progs = isels.iter().filter(|sel| sel.prog.is_some());
+        assert_eq!(progs.count(), 22);
     }
 }

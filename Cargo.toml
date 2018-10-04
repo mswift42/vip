@@ -1,7 +1,9 @@
+cargo-features = ["edition"]
 [package]
 name = "vip"
 version = "0.0.1"
 authors = ["mswift42 <martin.haesler@gmail.com>"]
+edition = "2018"
 
 [dependencies]
 select = "0.4.2"

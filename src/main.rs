@@ -15,6 +15,12 @@ pub trait DocumentLoader {
     fn load(&self) -> BoxResult<IplayerDocument>;
 }
 
+trait NextPager {
+    fn main_doc(&self) -> IplayerDocument;
+    fn next_pages(&self) -> Vec<IplayerDocument>;
+    fn programme_pages(Vec<IplayerSelection>) -> Vec<IplayerDocument>;
+}
+
 type BoxResult<T> = Result<T, Box<error::Error>>;
 
 pub struct IplayerDocument<'a> {

@@ -17,8 +17,8 @@ pub trait DocumentLoader {
 
 trait NextPager {
     fn main_doc(&self) -> IplayerDocument;
-    fn next_pages(&self) -> Vec<IplayerDocument>;
-    fn programme_pages(_: Vec<IplayerSelection>) -> Vec<IplayerDocument>;
+    fn next_pages(&self) -> Vec<Box<dyn DocumentLoader>>;
+    fn programme_pages(_: Vec<IplayerSelection>) -> Vec<Box<dyn DocumentLoader>>;
 }
 
 type BoxResult<T> = Result<T, Box<error::Error>>;

@@ -1,7 +1,3 @@
-extern crate reqwest;
-extern crate select;
-extern crate url;
-
 use std::path::PathBuf;
 
 use std::error;

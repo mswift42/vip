@@ -12,7 +12,7 @@ pub trait DocumentLoader {
 }
 
 trait NextPager {
-    fn main_doc(&self) -> IplayerDocument;
+    fn main_doc(&self) -> &IplayerDocument;
     fn next_pages(&self) -> Vec<Box<dyn DocumentLoader>>;
     fn programme_pages(_: Vec<IplayerSelection>) -> Vec<Box<dyn DocumentLoader>>;
 }
@@ -32,6 +32,15 @@ impl<'a> IplayerDocument<'a> {
                 None => None,
                 Some(nod) => Some(IplayerNode { node: nod }),
             }).collect()
+    }
+
+    fn main_doc(&self) -> &IplayerDocument {
+        self
+    }
+
+    fn next_pages(&self) -> Vec<Box<BeebURL>> {
+
+
     }
 }
 
@@ -359,9 +368,11 @@ mod tests {
         let id = idr.unwrap();
         let isel = id.iplayer_selections();
         assert_eq!(isel.len(), 26);
-        let prog_sites = isel.iter().filter(|sel| sel.programme_page.is_some());
+        let prog_sites =
+            isel.iter().filter(|sel| sel.programme_page.is_some());
         assert_eq!(prog_sites.count(), 20);
-        let progs = isels.iter().filter(|sel| sel.prog.is_some());
+        let progs =
+            isels.iter().filter(|sel| sel.prog.is_some());
         assert_eq!(progs.count(), 22);
     }
 }

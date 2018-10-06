@@ -5,7 +5,7 @@ use std::fs;
 
 use select::document::Document;
 use select::node::Node;
-use select::predicate::{Class, Name};
+use select::predicate::{Predicate, Attr, Class, Name, Descendant, And};
 
 pub trait DocumentLoader {
     fn load(&self) -> BoxResult<IplayerDocument>;
@@ -39,9 +39,13 @@ impl<'a> IplayerDocument<'a> {
     }
 
     fn next_pages(&self) -> Vec<Box<BeebURL>> {
-
-
+        self.doc.find(And(Name("div"), Class("page"))
+                          .descendant(Name("a")))
+            .map(|node| node.next()?.attr("href") )
+            .filter(|opt| opt.is_some())
+            .map(|url| Box::new(BeebURL{url: url.unwrap()})).collect()
     }
+
 }
 
 impl<'a> IplayerDocument<'a> {

@@ -5,7 +5,7 @@ use std::fs;
 
 use select::document::Document;
 use select::node::Node;
-use select::predicate::{Predicate, Attr, Class, Name, Descendant, And};
+use select::predicate::{And, Attr, Class, Descendant, Name, Predicate};
 
 pub trait DocumentLoader {
     fn load(&self) -> BoxResult<IplayerDocument>;
@@ -39,19 +39,28 @@ impl<'a> IplayerDocument<'a> {
     }
 
     fn next_pages(&self) -> Vec<Box<BeebURL>> {
-        self.doc.find(And(Name("div"), Class("page"))
-                          .descendant(Name("a")))
-            .map(|node| node.next()?.attr("href") )
+        self.doc
+            .find(And(Name("div"), Class("page")).descendant(Name("a")))
+            .map(|node| node.next()?.attr("href"))
             .filter(|opt| opt.is_some())
-            .map(|url| Box::new(BeebURL{url: url.unwrap()})).collect()
+            .map(|url| Box::new(BeebURL { url: url.unwrap() }))
+            .collect()
     }
 
+    fn programme_pages(selections: Vec<IplayerSelection>) -> Vec<Box<BeebURL>> {
+        selections.iter().filter(|sel| sel.programme_page.is_some())
+            .map(|opturl| Box::new(BeebURL{url: opturl.programme_page.unwrap()}))
+            .collect()
+    }
 }
 
 impl<'a> IplayerDocument<'a> {
     fn iplayer_selections(&self) -> Vec<IplayerSelection> {
-        self.doc.find(Class("content-item")).into_iter()
-            .map(|node| IplayerSelection::new(IplayerNode { node })).collect()
+        self.doc
+            .find(Class("content-item"))
+            .into_iter()
+            .map(|node| IplayerSelection::new(IplayerNode { node }))
+            .collect()
     }
 }
 
@@ -114,10 +123,10 @@ impl<'a> IplayerNode<'a> {
             .next()?
             .find(Class("content-item__description"))
             .next()
-            {
-                None => None,
-                Some(nd) => Some(nd.text()),
-            }
+        {
+            None => None,
+            Some(nd) => Some(nd.text()),
+        }
     }
 
     fn synopsis(&self) -> Option<String> {
@@ -129,10 +138,10 @@ impl<'a> IplayerNode<'a> {
             .next()?
             .find(Class("content-item__description"))
             .next()
-            {
-                None => None,
-                Some(nd) => Some(nd.text()),
-            }
+        {
+            None => None,
+            Some(nd) => Some(nd.text()),
+        }
     }
 
     fn url(&self) -> Option<&'a str> {
@@ -151,10 +160,10 @@ impl<'a> IplayerNode<'a> {
             .find(Class("source"))
             .next()?
             .attr("srcset")
-            {
-                None => None,
-                Some(set) => set.split(' ').next(),
-            }
+        {
+            None => None,
+            Some(set) => set.split(' ').next(),
+        }
     }
 
     fn available(&self) -> Option<String> {
@@ -166,10 +175,10 @@ impl<'a> IplayerNode<'a> {
             .next()?
             .find(Name("span"))
             .last()
-            {
-                None => None,
-                Some(sp) => Some(sp.text()),
-            }
+        {
+            None => None,
+            Some(sp) => Some(sp.text()),
+        }
     }
 
     fn duration(&self) -> Option<String> {
@@ -181,19 +190,20 @@ impl<'a> IplayerNode<'a> {
             .next()?
             .find(Name("span"))
             .next()
-            {
-                None => None,
-                Some(sp) => Some(sp.text()),
-            }
+        {
+            None => None,
+            Some(sp) => Some(sp.text()),
+        }
     }
     fn iplayer_selections(&self) -> Vec<IplayerSelection<'a>> {
-//        let mut selections = vec![];
-//        for node in self.node.next() {
-//            print!("{:?}", self.node.index());
-//            selections.push(IplayerSelection::new(IplayerNode{node}))
-//        }
-//        selections
-        self.node.children()
+        //        let mut selections = vec![];
+        //        for node in self.node.next() {
+        //            print!("{:?}", self.node.index());
+        //            selections.push(IplayerSelection::new(IplayerNode{node}))
+        //        }
+        //        selections
+        self.node
+            .children()
             .map(|node| IplayerSelection::new(IplayerNode { node }))
             .collect()
     }
@@ -323,29 +333,53 @@ mod tests {
         let mut d = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         d.push("testhtml");
         let tu = TestHTMLURL {
-            url: "testhtml/films1.html"
+            url: "testhtml/films1.html",
         };
         let idr = tu.load();
         assert!(idr.is_ok());
         let id = idr.unwrap();
         let nodes = id.doc.find(Class("content-item"));
-        let sites: Vec<IplayerNode> = nodes.filter(|node| IplayerNode { node: *node }.programme_site().is_some())
-            .map(|node| IplayerNode { node: node }).collect();
+        let sites: Vec<IplayerNode> = nodes
+            .filter(|node| IplayerNode { node: *node }.programme_site().is_some())
+            .map(|node| IplayerNode { node: node })
+            .collect();
         assert_eq!(sites.len(), 2);
-        assert_eq!(sites[0].programme_site().unwrap(), "testhtml/adam_curtis.html");
-        assert_eq!(sites[1].programme_site().unwrap(), "testhtml/storyville.html");
-        let tu = TestHTMLURL{url: "testhtml/food1.html"};
+        assert_eq!(
+            sites[0].programme_site().unwrap(),
+            "testhtml/adam_curtis.html"
+        );
+        assert_eq!(
+            sites[1].programme_site().unwrap(),
+            "testhtml/storyville.html"
+        );
+        let tu = TestHTMLURL {
+            url: "testhtml/food1.html",
+        };
         let idr = tu.load();
         assert!(idr.is_ok());
         let id = idr.unwrap();
         let nodes = id.doc.find(Class("content-item"));
-        let sites: Vec<IplayerNode> = nodes.filter(|node| IplayerNode{node: *node}.programme_site().is_some())
-            .map(|node| IplayerNode{node}).collect();
+        let sites: Vec<IplayerNode> = nodes
+            .filter(|node| IplayerNode { node: *node }.programme_site().is_some())
+            .map(|node| IplayerNode { node })
+            .collect();
         assert_eq!(sites.len(), 20);
-        assert_eq!(sites[0].programme_site().unwrap(), "testhtml/britains_best_home_cook.html");
-        assert_eq!(sites[1].programme_site().unwrap(), "testhtml/britains_fat_fight.html");
-        assert_eq!(sites[2].programme_site().unwrap(), "testhtml/caribbean_food_made_easy.html");
-        assert_eq!(sites[3].programme_site().unwrap(), "testhtml/delia_smiths_cookery_course.html");
+        assert_eq!(
+            sites[0].programme_site().unwrap(),
+            "testhtml/britains_best_home_cook.html"
+        );
+        assert_eq!(
+            sites[1].programme_site().unwrap(),
+            "testhtml/britains_fat_fight.html"
+        );
+        assert_eq!(
+            sites[2].programme_site().unwrap(),
+            "testhtml/caribbean_food_made_easy.html"
+        );
+        assert_eq!(
+            sites[3].programme_site().unwrap(),
+            "testhtml/delia_smiths_cookery_course.html"
+        );
     }
 
     #[test]
@@ -360,23 +394,21 @@ mod tests {
         let id = idr.unwrap();
         let isels = id.iplayer_selections();
         assert_eq!(isels.len(), 24);
-        let prog_sites = isels.iter().filter(|sel|
-            sel.programme_page.is_some());
+        let prog_sites = isels.iter().filter(|sel| sel.programme_page.is_some());
         assert_eq!(prog_sites.count(), 2);
-        let progs = isels.iter().filter(|sel|
-            sel.prog.is_some());
+        let progs = isels.iter().filter(|sel| sel.prog.is_some());
         assert_eq!(progs.count(), 22);
-        let tu = TestHTMLURL{url: "testhtml/food1.html"};
+        let tu = TestHTMLURL {
+            url: "testhtml/food1.html",
+        };
         let idr = tu.load();
         assert!(idr.is_ok());
         let id = idr.unwrap();
         let isel = id.iplayer_selections();
         assert_eq!(isel.len(), 26);
-        let prog_sites =
-            isel.iter().filter(|sel| sel.programme_page.is_some());
+        let prog_sites = isel.iter().filter(|sel| sel.programme_page.is_some());
         assert_eq!(prog_sites.count(), 20);
-        let progs =
-            isels.iter().filter(|sel| sel.prog.is_some());
+        let progs = isels.iter().filter(|sel| sel.prog.is_some());
         assert_eq!(progs.count(), 22);
     }
 }

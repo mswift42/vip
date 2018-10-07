@@ -289,13 +289,10 @@ mod testutils {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::path::PathBuf;
     use crate::tv::testutils::*;
 
     #[test]
     fn test_load() {
-        let mut d = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-        d.push("testhtml");
         let tu = testutils::TestHTMLURL {
             url: "testhtml/films1.html",
         };
@@ -305,8 +302,6 @@ mod tests {
 
     #[test]
     fn test_programme_page() {
-        let mut d = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-        d.push("testhtml");
         let tu = testutils::TestHTMLURL {
             url: "testhtml/delia_smiths_cookery_course.html",
         };
@@ -320,8 +315,6 @@ mod tests {
 
     #[test]
     fn test_programme_site() {
-        let mut d = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-        d.push("testhtml");
         let tu = testutils::TestHTMLURL {
             url: "testhtml/films1.html",
         };
@@ -374,8 +367,6 @@ mod tests {
 
     #[test]
     fn test_iplayer_selections() {
-        let mut d = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-        d.push("testhtml");
         let tu = testutils::TestHTMLURL {
             url: "testhtml/films1.html",
         };
@@ -400,5 +391,14 @@ mod tests {
         assert_eq!(prog_sites.count(), 20);
         let progs = isels.iter().filter(|sel| sel.prog.is_some());
         assert_eq!(progs.count(), 22);
+    }
+
+    #[test]
+    fn test_next_pages() {
+        let tu = testutils::TestHTMLURL {
+            url: "testhtml/comedy1.html"
+        };
+        let idr = tu.load();
+        assert!(idr.is_ok());
     }
 }

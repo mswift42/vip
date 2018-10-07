@@ -1,5 +1,3 @@
-use std::path::PathBuf;
-
 use std::error;
 use std::fs;
 
@@ -400,5 +398,8 @@ mod tests {
         };
         let idr = tu.load();
         assert!(idr.is_ok());
+        let id = idr.unwrap();
+        let np = id.next_pages();
+        assert_eq!(np.len(), 1);
     }
 }

@@ -68,9 +68,6 @@ pub struct BeebURL<'a> {
     url: &'a str,
 }
 
-pub struct TestHTMLURL<'a> {
-    url: &'a str,
-}
 
 struct ProgrammePage<'a> {
     idoc: IplayerDocument<'a>,
@@ -273,11 +270,18 @@ impl<'a> BeebURL<'a> {
     }
 }
 
-impl<'a> TestHTMLURL<'a> {
-    fn load(&self) -> BoxResult<IplayerDocument> {
-        let html = fs::read(self.url)?;
-        let doc = Document::from_read(&html[..])?;
-        Ok(IplayerDocument { doc, url: self.url })
+
+mod testutils {
+    use super::*;
+    pub struct TestHTMLURL<'a> {
+        pub url: &'a str,
+    }
+    impl<'a> TestHTMLURL<'a> {
+       pub fn load(&self) -> super::BoxResult<IplayerDocument> {
+            let html = fs::read(self.url)?;
+            let doc = Document::from_read(&html[..])?;
+            Ok(IplayerDocument { doc, url: self.url })
+        }
     }
 }
 
@@ -286,12 +290,13 @@ impl<'a> TestHTMLURL<'a> {
 mod tests {
     use super::*;
     use std::path::PathBuf;
+    use crate::tv::testutils::*;
 
     #[test]
     fn test_load() {
         let mut d = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         d.push("testhtml");
-        let tu = TestHTMLURL {
+        let tu = testutils::TestHTMLURL {
             url: "testhtml/films1.html",
         };
         let idr = tu.load();
@@ -302,7 +307,7 @@ mod tests {
     fn test_programme_page() {
         let mut d = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         d.push("testhtml");
-        let tu = TestHTMLURL {
+        let tu = testutils::TestHTMLURL {
             url: "testhtml/delia_smiths_cookery_course.html",
         };
         let idr = tu.load();
@@ -317,7 +322,7 @@ mod tests {
     fn test_programme_site() {
         let mut d = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         d.push("testhtml");
-        let tu = TestHTMLURL {
+        let tu = testutils::TestHTMLURL {
             url: "testhtml/films1.html",
         };
         let idr = tu.load();
@@ -337,7 +342,7 @@ mod tests {
             sites[1].programme_site().unwrap(),
             "testhtml/storyville.html"
         );
-        let tu = TestHTMLURL {
+        let tu = testutils::TestHTMLURL {
             url: "testhtml/food1.html",
         };
         let idr = tu.load();
@@ -371,7 +376,7 @@ mod tests {
     fn test_iplayer_selections() {
         let mut d = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         d.push("testhtml");
-        let tu = TestHTMLURL {
+        let tu = testutils::TestHTMLURL {
             url: "testhtml/films1.html",
         };
         let idr = tu.load();

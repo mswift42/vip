@@ -52,6 +52,14 @@ impl<'a> IplayerDocument<'a> {
     }
 }
 
+fn np_page_options<'a>(idoc: &'a IplayerDocument) -> Vec<&'a str> {
+    idoc.doc.find(And(Name("div"), Class("page"))
+        .descendant(Name("a")))
+        .filter_map(|node| node.next()?.attr("href"))
+        .collect()
+
+}
+
 impl<'a> IplayerDocument<'a> {
     fn iplayer_selections(&self) -> Vec<IplayerSelection> {
         self.doc

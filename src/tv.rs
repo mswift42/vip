@@ -281,6 +281,10 @@ mod testutils {
             Ok(IplayerDocument { doc, url: self.url })
         }
     }
+
+    pub struct TestIplayerDocument<'a> {
+        pub idoc: IplayerDocument<'a>,
+    }
 }
 
 

@@ -285,6 +285,12 @@ mod testutils {
     pub struct TestIplayerDocument<'a> {
         pub idoc: IplayerDocument<'a>,
     }
+
+    impl<'a> TestIplayerDocument<'a> {
+        fn main_doc(&self) -> &IplayerDocument {
+            &self.idoc
+        }
+    }
 }
 
 

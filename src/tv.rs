@@ -38,7 +38,7 @@ impl<'a> IplayerDocument<'a> {
 
     fn next_pages(&self) -> Vec<Box<BeebURL>> {
         self.doc
-            .find(And(Name("div"), Class("page")).descendant(Name("a")))
+            .find(And(Name("li"), Class("pagination__number")).child(Name("a")))
             .map(|node| node.next()?.attr("href"))
             .filter(|opt| opt.is_some())
             .map(|url| Box::new(BeebURL { url: url.unwrap() }))
@@ -53,7 +53,7 @@ impl<'a> IplayerDocument<'a> {
 }
 
 fn np_page_options<'a>(idoc: &'a IplayerDocument) -> Vec<&'a str> {
-    idoc.doc.find(And(Name("div"), Class("page"))
+    idoc.doc.find(And(Name("li"), Class("pagination__number"))
         .descendant(Name("a")))
         .filter_map(|node| node.next()?.attr("href"))
         .collect()
@@ -419,5 +419,7 @@ mod tests {
         let id = idr.unwrap();
         let np = id.next_pages();
         assert_eq!(np.len(), 1);
+//        let nppo = np_page_options(&id);
+//        assert_eq!(nppo.len(), 1);
     }
 }

@@ -69,6 +69,14 @@ pub struct BeebURL<'a> {
     url: &'a str,
 }
 
+static BBCPREFIX: &'static str = "https://bbc.co.uk";
+
+impl<'a> BeebURL<'a> {
+    fn new(url: &'a str) -> BeebURL<'a> {
+        if url.starts_with("/iplayer/")
+    }
+}
+
 
 struct ProgrammePage<'a> {
     idoc: IplayerDocument<'a>,

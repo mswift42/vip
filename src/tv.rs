@@ -72,7 +72,6 @@ pub struct BeebURL<'a> {
 static BBCPREFIX: &'static str = "https://bbc.co.uk";
 
 
-
 struct ProgrammePage<'a> {
     idoc: IplayerDocument<'a>,
 }
@@ -265,6 +264,13 @@ impl<'a> ProgrammePage<'a> {
     }
 }
 
+struct MainCategoryDocument<'a> {
+    maindoc: IplayerDocument<'a>,
+    nextdocs: Vec<IplayerDocument<'a>>,
+    programme_page_docs: Vec<IplayerDocument<'a>>,
+    selections: Vec<IplayerSelection<'a>>
+}
+
 impl<'a> BeebURL<'a> {
     fn load(&self) -> BoxResult<IplayerDocument> {
         let uri = url::Url::parse(self.url)?;
@@ -417,7 +423,5 @@ mod tests {
         let id = idr.unwrap();
         let np = id.next_pages();
         assert_eq!(np.len(), 1);
-//        let nppo = np_page_options(&id);
-//        assert_eq!(nppo.len(), 1);
     }
 }

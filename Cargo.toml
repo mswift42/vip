@@ -8,4 +8,4 @@ edition = "2018"
 [dependencies]
 select = "0.4.2"
 url = "1.7.1"
-reqwest = "0.8.7"
+reqwest = "0.9.3"

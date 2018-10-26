@@ -302,7 +302,14 @@ mod testutils {
         fn main_doc(&self) -> &IplayerDocument {
             &self.idoc
         }
+
+        fn next_pages(&self) -> Vec<Box<TestHTMLURL>> {
+            np_page_options(&self.idoc).iter().map(
+                |url| Box::new(TestHTMLURL{url})
+            ).collect()
+        }
     }
+
 }
 
 
@@ -344,7 +351,7 @@ mod tests {
         let nodes = id.doc.find(Class("content-item"));
         let sites: Vec<IplayerNode> = nodes
             .filter(|node| IplayerNode { node: *node }.programme_site().is_some())
-            .map(|node| IplayerNode { node: node })
+            .map(|node| IplayerNode {node})
             .collect();
         assert_eq!(sites.len(), 2);
         assert_eq!(

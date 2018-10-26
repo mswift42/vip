@@ -1,4 +1,3 @@
-cargo-features = ["edition"]
 [package]
 name = "vip"
 version = "0.0.1"

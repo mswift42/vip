@@ -299,11 +299,11 @@ mod testutils {
     }
 
     impl<'a> TestIplayerDocument<'a> {
-        fn main_doc(&self) -> &IplayerDocument {
+        pub fn main_doc(&self) -> &IplayerDocument {
             &self.idoc
         }
 
-        fn next_pages(&self) -> Vec<Box<TestHTMLURL>> {
+        pub fn next_pages(&self) -> Vec<Box<TestHTMLURL>> {
             np_page_options(&self.idoc).iter().map(
                 |url| Box::new(TestHTMLURL{url})
             ).collect()
@@ -427,8 +427,9 @@ mod tests {
         };
         let idr = tu.load();
         assert!(idr.is_ok());
-        let id = idr.unwrap();
-        let np = id.next_pages();
+        let idoc = idr.unwrap();
+        let tdoc = TestIplayerDocument{idoc};
+        let np = tdoc.next_pages();
         assert_eq!(np.len(), 1);
     }
 }

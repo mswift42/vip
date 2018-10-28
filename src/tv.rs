@@ -308,6 +308,13 @@ mod testutils {
                 |url| Box::new(TestHTMLURL{url})
             ).collect()
         }
+
+        pub fn programme_pages(self, selres: Vec<IplayerSelection>) -> Vec<TestHTMLURL> {
+            selres.iter().filter(|sel|
+            sel.programme_page.is_some())
+                .map(|sel| TestHTMLURL{url: sel.programme_page.unwrap()})
+                .collect()
+        }
     }
 
 }

@@ -17,6 +17,7 @@ trait NextPager {
 
 type BoxResult<T> = Result<T, Box<error::Error>>;
 
+#[derive(Clone)]
 pub struct IplayerDocument<'a> {
     doc: Document,
     url: &'a str,
@@ -37,12 +38,12 @@ impl<'a> IplayerDocument<'a> {
     }
 
     fn next_pages(&self) -> Vec<Box<BeebURL>> {
-        np_page_options(self).iter().map(|url| Box::new(BeebURL{url})).collect()
+        np_page_options(self).iter().map(|url| Box::new(BeebURL { url })).collect()
     }
 
     fn programme_pages(selections: Vec<IplayerSelection>) -> Vec<Box<BeebURL>> {
         selections.iter().filter(|sel| sel.programme_page.is_some())
-            .map(|opturl| Box::new(BeebURL{url: opturl.programme_page.unwrap()}))
+            .map(|opturl| Box::new(BeebURL { url: opturl.programme_page.unwrap() }))
             .collect()
     }
 }
@@ -52,11 +53,10 @@ fn np_page_options<'a>(idoc: &'a IplayerDocument) -> Vec<&'a str> {
         .child(Name("a")))
         .filter_map(|node| node.next()?.attr("href"))
         .collect()
-
 }
 
 impl<'a> IplayerDocument<'a> {
-    fn iplayer_selections(&self) -> Vec<IplayerSelection<'a>> {
+    fn iplayer_selections(&self) -> Vec<IplayerSelection> {
         self.doc
             .find(Class("content-item"))
             .into_iter()
@@ -270,7 +270,7 @@ struct MainCategoryDocument<'a> {
     maindoc: IplayerDocument<'a>,
     nextdocs: Vec<IplayerDocument<'a>>,
     programme_page_docs: Vec<IplayerDocument<'a>>,
-    selections: Vec<IplayerSelection<'a>>
+    selections: Vec<IplayerSelection<'a>>,
 }
 
 impl<'a> BeebURL<'a> {
@@ -285,17 +285,20 @@ impl<'a> BeebURL<'a> {
 
 mod testutils {
     use super::*;
+
     pub struct TestHTMLURL<'a> {
         pub url: &'a str,
     }
+
     impl<'a> TestHTMLURL<'a> {
-       pub fn load(&self) -> super::BoxResult<IplayerDocument> {
+        pub fn load(&self) -> super::BoxResult<IplayerDocument> {
             let html = fs::read(self.url)?;
             let doc = Document::from_read(&html[..])?;
             Ok(IplayerDocument { doc, url: self.url })
         }
     }
 
+    #[derive(Clone)]
     pub struct TestIplayerDocument<'a> {
         pub idoc: IplayerDocument<'a>,
     }
@@ -307,18 +310,17 @@ mod testutils {
 
         pub fn next_pages(&self) -> Vec<Box<TestHTMLURL>> {
             np_page_options(&self.idoc).iter().map(
-                |url| Box::new(TestHTMLURL{url})
+                |url| Box::new(TestHTMLURL { url })
             ).collect()
         }
 
         pub fn programme_pages(self, selres: Vec<IplayerSelection>) -> Vec<TestHTMLURL> {
             selres.iter().filter(|sel|
-            sel.programme_page.is_some())
-                .map(|sel| TestHTMLURL{url: sel.programme_page.unwrap()})
+                sel.programme_page.is_some())
+                .map(|sel| TestHTMLURL { url: sel.programme_page.unwrap() })
                 .collect()
         }
     }
-
 }
 
 
@@ -360,7 +362,7 @@ mod tests {
         let nodes = id.doc.find(Class("content-item"));
         let sites: Vec<IplayerNode> = nodes
             .filter(|node| IplayerNode { node: *node }.programme_site().is_some())
-            .map(|node| IplayerNode {node})
+            .map(|node| IplayerNode { node })
             .collect();
         assert_eq!(sites.len(), 2);
         assert_eq!(
@@ -437,21 +439,22 @@ mod tests {
         let idr = tu.load();
         assert!(idr.is_ok());
         let idoc = idr.unwrap();
-        let tdoc = TestIplayerDocument{idoc};
+        let tdoc = TestIplayerDocument { idoc };
         let np = tdoc.next_pages();
         assert_eq!(np.len(), 1);
     }
 
     #[test]
     fn test_programme_pages() {
-        let tu = testutils::TestHTMLURL{
+        let tu = testutils::TestHTMLURL {
             url: "testhtml/films1.html"
         };
         let idr = tu.load();
         assert!(idr.is_ok());
-        let tdoc = TestIplayerDocument{idoc: idr.unwrap()};
-        let isel = &mut tdoc.idoc.iplayer_selections();
-        let progpages = tdoc.programme_pages(isel.to_vec());
-        assert_eq!(progpages.len(), 5);
+        let tdoc = TestIplayerDocument { idoc: idr.unwrap() };
+        let seldoc = tdoc.clone();
+        let isel = tdoc.idoc.iplayer_selections();
+        let progpages = seldoc.programme_pages(isel.to_vec());
+        assert_eq!(progpages.len(), 2);
     }
 }

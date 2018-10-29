@@ -314,7 +314,7 @@ mod testutils {
             ).collect()
         }
 
-        pub fn programme_pages(self, selres: Vec<IplayerSelection>) -> Vec<TestHTMLURL> {
+        pub fn programme_pages(self, selres: &'a Vec<IplayerSelection>) -> Vec<TestHTMLURL<'a>> {
             selres.iter().filter(|sel|
                 sel.programme_page.is_some())
                 .map(|sel| TestHTMLURL { url: sel.programme_page.unwrap() })
@@ -454,7 +454,7 @@ mod tests {
         let tdoc = TestIplayerDocument { idoc: idr.unwrap() };
         let seldoc = tdoc.clone();
         let isel = tdoc.idoc.iplayer_selections();
-        let progpages = seldoc.programme_pages(isel.to_vec());
+        let progpages = seldoc.programme_pages(&isel);
         assert_eq!(progpages.len(), 2);
     }
 }

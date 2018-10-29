@@ -56,7 +56,7 @@ fn np_page_options<'a>(idoc: &'a IplayerDocument) -> Vec<&'a str> {
 }
 
 impl<'a> IplayerDocument<'a> {
-    fn iplayer_selections(&self) -> Vec<IplayerSelection> {
+    fn iplayer_selections(&self) -> Vec<IplayerSelection<'a>> {
         self.doc
             .find(Class("content-item"))
             .into_iter()
@@ -76,6 +76,7 @@ struct ProgrammePage<'a> {
     idoc: IplayerDocument<'a>,
 }
 
+#[derive(Clone)]
 struct IplayerSelection<'a> {
     prog: Option<Programme<'a>>,
     programme_page: Option<&'a str>,
@@ -209,6 +210,7 @@ impl<'a> IplayerNode<'a> {
     }
 }
 
+#[derive(Clone)]
 pub struct Programme<'a> {
     pub title: Option<String>,
     pub subtitle: Option<String>,
@@ -438,5 +440,18 @@ mod tests {
         let tdoc = TestIplayerDocument{idoc};
         let np = tdoc.next_pages();
         assert_eq!(np.len(), 1);
+    }
+
+    #[test]
+    fn test_programme_pages() {
+        let tu = testutils::TestHTMLURL{
+            url: "testhtml/films1.html"
+        };
+        let idr = tu.load();
+        assert!(idr.is_ok());
+        let tdoc = TestIplayerDocument{idoc: idr.unwrap()};
+        let isel = &mut tdoc.idoc.iplayer_selections();
+        let progpages = tdoc.programme_pages(isel.to_vec());
+        assert_eq!(progpages.len(), 5);
     }
 }

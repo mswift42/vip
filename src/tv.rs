@@ -52,7 +52,7 @@ fn np_page_options<'a>(idoc: &'a IplayerDocument) -> Vec<&'a str> {
     idoc.doc.find(And(Name("li"), Class("pagination__number"))
         .child(Name("a")))
         .filter_map(|node| node.next()?.attr("href"))
-        .collect()
+        .collect::<Vec<&'a str>>()
 }
 
 impl<'a> IplayerDocument<'a> {
@@ -61,7 +61,7 @@ impl<'a> IplayerDocument<'a> {
             .find(Class("content-item"))
             .into_iter()
             .map(|node| IplayerSelection::new(IplayerNode { node }))
-            .collect()
+            .collect::<Vec<IplayerSelection>>()
     }
 }
 
@@ -77,9 +77,9 @@ struct ProgrammePage<'a> {
 }
 
 #[derive(Clone)]
-struct IplayerSelection<'a> {
-    prog: Option<Programme<'a>>,
-    programme_page: Option<&'a str>,
+pub struct IplayerSelection<'a> {
+   pub prog: Option<Programme<'a>>,
+    pub programme_page: Option<&'a str>,
 }
 
 impl<'a> IplayerSelection<'a> {

@@ -197,12 +197,6 @@ impl<'a> IplayerNode<'a> {
             }
     }
     fn iplayer_selections(&self) -> Vec<IplayerSelection<'a>> {
-        //        let mut selections = vec![];
-        //        for node in self.node.next() {
-        //            print!("{:?}", self.node.index());
-        //            selections.push(IplayerSelection::new(IplayerNode{node}))
-        //        }
-        //        selections
         self.node
             .children()
             .map(|node| IplayerSelection::new(IplayerNode { node }))

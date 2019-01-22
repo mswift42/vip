@@ -3,7 +3,7 @@ use std::fs;
 
 use select::document::Document;
 use select::node::Node;
-use select::predicate::{And, Attr, Class, Descendant, Name, Predicate};
+use select::predicate::{Class, Name, Predicate};
 
 pub trait DocumentLoader {
     fn load(&self) -> BoxResult<IplayerDocument>;
@@ -78,7 +78,7 @@ struct ProgrammePage<'a> {
 
 #[derive(Clone)]
 pub struct IplayerSelection<'a> {
-   pub prog: Option<Programme<'a>>,
+    pub prog: Option<Programme<'a>>,
     pub programme_page: Option<&'a str>,
 }
 

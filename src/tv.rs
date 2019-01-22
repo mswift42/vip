@@ -436,6 +436,7 @@ mod tests {
         let tdoc = TestIplayerDocument { idoc };
         let np = tdoc.next_pages();
         assert_eq!(np.len(), 1);
+        assert_eq!(np[0].url, "testhtml/comedy2.html");
     }
 
     #[test]

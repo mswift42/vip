@@ -461,5 +461,9 @@ mod tests {
         let isel = tdoc.idoc.iplayer_selections();
         let progpages = seldoc.programme_pages(&isel);
         assert_eq!(progpages.len(), 20);
+        assert_eq!(progpages[0].url, "testhtml/britains_best_home_cook.html");
+        assert_eq!(progpages[1].url, "testhtml/britains_fat_fight.html");
+        assert_eq!(progpages[2].url, "testhtml/caribbean_food_made_easy.html");
+        assert_eq!(progpages[3].url, "testhtml/delia_smiths_cookery_course.html");
     }
 }

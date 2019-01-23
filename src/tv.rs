@@ -5,6 +5,7 @@ use select::document::Document;
 use select::node::Node;
 use select::predicate::{Class, Name, Predicate};
 
+
 pub trait DocumentLoader {
     fn load(&self) -> BoxResult<IplayerDocument>;
 }
@@ -451,5 +452,14 @@ mod tests {
         let isel = tdoc.idoc.iplayer_selections();
         let progpages = seldoc.programme_pages(&isel);
         assert_eq!(progpages.len(), 2);
+        let tu = testutils::TestHTMLURL{
+            url: "testhtml/food1.html"
+        };
+        let idr = tu.load();
+        let tdoc = TestIplayerDocument{idoc: idr.unwrap()};
+        let seldoc = tdoc.clone();
+        let isel = tdoc.idoc.iplayer_selections();
+        let progpages = seldoc.programme_pages(&isel);
+        assert_eq!(progpages.len(), 20);
     }
 }

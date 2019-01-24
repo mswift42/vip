@@ -465,5 +465,6 @@ mod tests {
         assert_eq!(progpages[1].url, "testhtml/britains_fat_fight.html");
         assert_eq!(progpages[2].url, "testhtml/caribbean_food_made_easy.html");
         assert_eq!(progpages[3].url, "testhtml/delia_smiths_cookery_course.html");
+        assert_eq!(progpages[19].url, "testhtml/top_of_the_shop_with_tom_kerridge.html");
     }
 }

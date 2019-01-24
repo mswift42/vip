@@ -452,6 +452,8 @@ mod tests {
         let isel = tdoc.idoc.iplayer_selections();
         let progpages = seldoc.programme_pages(&isel);
         assert_eq!(progpages.len(), 2);
+        assert_eq!(progpages[0].url, "testhtml/adam_curtis.html");
+        assert_eq!(progpages[1].url, "testhtml/storyville.html");
         let tu = testutils::TestHTMLURL{
             url: "testhtml/food1.html"
         };

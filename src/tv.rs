@@ -438,12 +438,12 @@ mod tests {
         let np = tdoc.next_pages();
         assert_eq!(np.len(), 1);
         assert_eq!(np[0].url, "testhtml/comedy2.html");
-        let tu = testutils::TestHTMLURL{
+        let tu = testutils::TestHTMLURL {
             url: "testhtml/food1.html"
         };
         let idr = tu.load();
         assert!(idr.is_ok());
-        let tdoc = TestIplayerDocument{idoc: idr.unwrap()};
+        let tdoc = TestIplayerDocument { idoc: idr.unwrap() };
         let np = tdoc.next_pages();
         assert_eq!(np.len(), 0);
     }
@@ -462,11 +462,11 @@ mod tests {
         assert_eq!(progpages.len(), 2);
         assert_eq!(progpages[0].url, "testhtml/adam_curtis.html");
         assert_eq!(progpages[1].url, "testhtml/storyville.html");
-        let tu = testutils::TestHTMLURL{
+        let tu = testutils::TestHTMLURL {
             url: "testhtml/food1.html"
         };
         let idr = tu.load();
-        let tdoc = TestIplayerDocument{idoc: idr.unwrap()};
+        let tdoc = TestIplayerDocument { idoc: idr.unwrap() };
         let seldoc = tdoc.clone();
         let isel = tdoc.idoc.iplayer_selections();
         let progpages = seldoc.programme_pages(&isel);
@@ -476,5 +476,15 @@ mod tests {
         assert_eq!(progpages[2].url, "testhtml/caribbean_food_made_easy.html");
         assert_eq!(progpages[3].url, "testhtml/delia_smiths_cookery_course.html");
         assert_eq!(progpages[19].url, "testhtml/top_of_the_shop_with_tom_kerridge.html");
+    }
+
+    #[test]
+    fn test_new_main_category() {
+        let tu = testutils::TestHTMLURL {
+            url: "testhtml/food1.html"
+        };
+        let idr = tu.load();
+        assert!(idr.is_ok());
+        let tdoc = TestIplayerDocument { idoc: idr.unwrap() };
     }
 }

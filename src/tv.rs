@@ -438,6 +438,14 @@ mod tests {
         let np = tdoc.next_pages();
         assert_eq!(np.len(), 1);
         assert_eq!(np[0].url, "testhtml/comedy2.html");
+        let tu = testutils::TestHTMLURL{
+            url: "testhtml/food1.html"
+        };
+        let idr = tu.load();
+        assert!(idr.is_ok());
+        let tdoc = TestIplayerDocument{idoc: idr.unwrap()};
+        let np = tdoc.next_pages();
+        assert_eq!(np.len(), 0);
     }
 
     #[test]

@@ -287,7 +287,7 @@ mod testutils {
     }
 
     impl<'a> TestHTMLURL<'a> {
-        fn load(&self) -> super::BoxResult<IplayerDocument> {
+        pub fn load(&self) -> super::BoxResult<IplayerDocument> {
             let html = fs::read(self.url)?;
             let doc = Document::from_read(&html[..])?;
             Ok(IplayerDocument { doc, url: self.url })
@@ -300,17 +300,17 @@ mod testutils {
     }
 
     impl<'a> TestIplayerDocument<'a> {
-        fn main_doc(&self) -> &IplayerDocument {
+        pub fn main_doc(&self) -> &IplayerDocument {
             &self.idoc
         }
 
-        fn next_pages(&self) -> Vec<Box<TestHTMLURL>> {
+        pub fn next_pages(&self) -> Vec<Box<TestHTMLURL>> {
             np_page_options(&self.idoc).iter().map(
                 |url| Box::new(TestHTMLURL { url })
             ).collect()
         }
 
-        fn programme_pages(selres: Vec<IplayerSelection>) -> Vec<Box<TestHTMLURL>> {
+        pub fn programme_pages(self, selres: &'a Vec<IplayerSelection>) -> Vec<Box<TestHTMLURL<'a>>> {
             selres.iter().filter(|sel|
                 sel.programme_page.is_some())
                 .map(|sel| Box::new(TestHTMLURL { url: sel.programme_page.unwrap() }))

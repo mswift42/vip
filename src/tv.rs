@@ -13,7 +13,7 @@ pub trait DocumentLoader {
 trait NextPager {
     fn main_doc(&self) -> &IplayerDocument;
     fn next_pages(&self) -> Vec<Box<dyn DocumentLoader>>;
-    fn programme_pages(_: Vec<IplayerSelection>) -> Vec<Box<dyn DocumentLoader>>;
+    fn programme_pages(&self, _: Vec<IplayerSelection>) -> Vec<Box<dyn DocumentLoader>>;
 }
 
 
@@ -299,14 +299,14 @@ mod testutils {
         pub idoc: IplayerDocument<'a>,
     }
 
-    impl<'a> TestIplayerDocument<'a> {
+    impl<'a> NextPager for TestIplayerDocument<'a> {
         pub fn main_doc(&self) -> &IplayerDocument {
             &self.idoc
         }
 
-        pub fn next_pages(&self) -> Vec<Box<TestHTMLURL>> {
+        pub fn next_pages(&self) -> Vec<Box<dyn DocumentLoader>> {
             np_page_options(&self.idoc).iter().map(
-                |url| Box::new(TestHTMLURL { url })
+                |url| DocumentLoader::Box::new(TestHTMLURL { url })
             ).collect()
         }
 

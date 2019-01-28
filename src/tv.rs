@@ -287,8 +287,8 @@ mod testutils {
     }
 
     impl<'a> TestHTMLURL<'a> {
-        pub fn new(&self) -> TestHTMLURL {
-            TestHTMLURL{url: self.url}
+        pub fn new(url: &str) -> TestHTMLURL {
+            TestHTMLURL{url}
         }
         pub fn load(&self) -> super::BoxResult<IplayerDocument> {
             let html = fs::read(self.url)?;
@@ -309,7 +309,10 @@ mod testutils {
 
         fn next_pages(&self) -> Vec<Box<dyn DocumentLoader>> {
             np_page_options(&self.idoc).iter().map(
-                |url| Box::new(TestHTMLURL { url } )
+                |url| {
+                    let u = TestHTMLURL::new(url);
+                    Box::new(TestHTMLURL { url })
+                }
             ).collect()
         }
 

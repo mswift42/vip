@@ -10,7 +10,7 @@ pub trait DocumentLoader {
     fn load(&self) -> BoxResult<IplayerDocument>;
 }
 
-trait NextPager {
+pub trait NextPager {
     fn main_doc(&self) -> &IplayerDocument;
     fn next_pages(&self) -> Vec<Box<dyn DocumentLoader>>;
     fn programme_pages(&self, _: Vec<IplayerSelection>) -> Vec<Box<dyn DocumentLoader>>;
@@ -292,7 +292,7 @@ mod testutils {
         }
     }
     impl<'a> DocumentLoader for TestHTMLURL<'a> {
-        pub fn load(&self) -> super::BoxResult<IplayerDocument> {
+        fn load(&self) -> super::BoxResult<IplayerDocument> {
             let html = fs::read(self.url)?;
             let doc = Document::from_read(&html[..])?;
             Ok(IplayerDocument { doc, url: self.url })

@@ -50,11 +50,11 @@ impl<'a> IplayerDocument<'a> {
     }
 }
 
-fn np_page_options<'a>(idoc: &'a IplayerDocument) -> Vec<String> {
+fn np_page_options<'a>(idoc: IplayerDocument) -> Vec<String> {
     idoc.doc.find(Class("pagination__number")
         .descendant(Name("a")))
         .filter_map(|n| n.attr("href"))
-        .map(|o|o.to_string())
+        .map(|o| o.to_string())
         .collect()
 }
 
@@ -292,6 +292,7 @@ mod testutils {
             TestHTMLURL { url }
         }
     }
+
     impl<'a> DocumentLoader for TestHTMLURL<'a> {
         fn load(&self) -> super::BoxResult<IplayerDocument> {
             let html = fs::read(self.url)?;

@@ -321,7 +321,12 @@ mod testutils {
         fn programme_pages(&self, selres: Vec<IplayerSelection>) -> Vec<Box<dyn DocumentLoader>> {
             selres.iter().filter(|sel|
                 sel.programme_page.is_some())
-                .map(|sel| DocumentLoader::Box::new(TestHTMLURL { url: sel.programme_page.unwrap() }))
+                .map(|sel| {
+                    let dl: Box<dyn DocumentLoader> = Box::new(TestHTMLURL::new(
+                        sel.programme_page.unwrap()
+                    ));
+                    dl
+                })
                 .collect()
         }
     }

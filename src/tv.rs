@@ -50,10 +50,11 @@ impl<'a> IplayerDocument<'a> {
     }
 }
 
-fn np_page_options<'a>(idoc: &'a IplayerDocument) -> Vec<&'a str> {
+fn np_page_options<'a>(idoc: &'a IplayerDocument) -> Vec<String> {
     idoc.doc.find(Class("pagination__number")
         .descendant(Name("a")))
         .filter_map(|n| n.attr("href"))
+        .map(|o|o.to_string())
         .collect()
 }
 
@@ -312,7 +313,7 @@ mod testutils {
         fn next_pages(&self) -> Vec<Box<DocumentLoader>> {
             np_page_options(&self.idoc).iter().map(
                 |url| {
-                    let u: Box<dyn DocumentLoader> = Box::new(TestHTMLURL::new(*url));
+                    let u: Box<dyn DocumentLoader> = Box::new(TestHTMLURL::new(&url));
                     u
                 }
             ).collect()

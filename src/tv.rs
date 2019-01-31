@@ -293,7 +293,7 @@ mod testutils {
     }
 
     impl<'a> TestHTMLURL<'a> {
-        fn load(&self) -> super::BoxResult<IplayerDocument> {
+        pub fn load(&self) -> super::BoxResult<IplayerDocument> {
             let html = fs::read(self.url)?;
             let doc = Document::from_read(&html[..])?;
             Ok(IplayerDocument { doc, url: self.url })
@@ -428,8 +428,7 @@ mod tests {
         let idr = tu.load();
         assert!(idr.is_ok());
         let idoc = idr.unwrap();
-        let tdoc = TestIplayerDocument { idoc };
-        let np = tdoc.next_pages();
+        let np = idoc.next_pages();
         assert_eq!(np.len(), 1);
         assert_eq!(np[0].url, "testhtml/comedy2.html");
         let tu = testutils::TestHTMLURL {
@@ -437,8 +436,7 @@ mod tests {
         };
         let idr = tu.load();
         assert!(idr.is_ok());
-        let tdoc = TestIplayerDocument { idoc: idr.unwrap() };
-        let np = tdoc.next_pages();
+        let np = idr.unwrap().next_pages();
         assert_eq!(np.len(), 0);
     }
 

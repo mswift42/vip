@@ -40,7 +40,7 @@ impl<'a> IplayerDocument<'a> {
     }
 
     fn next_pages(&self) -> Vec<Box<BeebURL>> {
-        np_page_options(self).iter().map(|url| Box::new(BeebURL { url })).collect()
+        np_page_options(*self).iter().map(|url| Box::new(BeebURL { url })).collect()
     }
 
     fn programme_pages(selections: Vec<IplayerSelection>) -> Vec<Box<BeebURL>> {
@@ -293,7 +293,7 @@ mod testutils {
         }
     }
 
-    impl<'a> DocumentLoader for TestHTMLURL<'a> {
+    impl<'a> TestHTMLURL<'a> {
         fn load(&self) -> super::BoxResult<IplayerDocument> {
             let html = fs::read(self.url)?;
             let doc = Document::from_read(&html[..])?;
@@ -306,30 +306,9 @@ mod testutils {
         pub idoc: IplayerDocument<'a>,
     }
 
-    impl<'a> NextPager for TestIplayerDocument<'a> {
+    impl<'a> TestIplayerDocument<'a> {
         fn main_doc(&self) -> &IplayerDocument {
             &self.idoc
-        }
-
-        fn next_pages(&self) -> Vec<Box<DocumentLoader>> {
-            np_page_options(&self.idoc).iter().map(
-                |url| {
-                    let u: Box<dyn DocumentLoader> = Box::new(TestHTMLURL::new(&url));
-                    u
-                }
-            ).collect()
-        }
-
-        fn programme_pages(&self, selres: Vec<IplayerSelection>) -> Vec<Box<dyn DocumentLoader>> {
-            selres.iter().filter(|sel|
-                sel.programme_page.is_some())
-                .map(|sel| {
-                    let dl: Box<dyn DocumentLoader> = Box::new(TestHTMLURL::new(
-                        sel.programme_page.unwrap()
-                    ));
-                    dl
-                })
-                .collect()
         }
     }
 }

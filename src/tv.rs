@@ -43,7 +43,7 @@ impl<'a> IplayerDocument<'a> {
         np_page_options(self).iter().map(|url| Box::new(BeebURL { url })).collect()
     }
 
-    fn programme_pages(selections: Vec<IplayerSelection>) -> Vec<Box<BeebURL>> {
+    fn programme_pages(self, selections: Vec<IplayerSelection>) -> Vec<Box<BeebURL>> {
         selections.iter().filter(|sel| sel.programme_page.is_some())
             .map(|opturl| Box::new(BeebURL { url: opturl.programme_page.unwrap() }))
             .collect()
@@ -436,7 +436,8 @@ mod tests {
         };
         let idr = tu.load();
         assert!(idr.is_ok());
-        let np = idr.unwrap().next_pages();
+        let id = idr.unwrap();
+        let np = id.next_pages();
         assert_eq!(np.len(), 0);
     }
 
@@ -450,7 +451,7 @@ mod tests {
         let tdoc = TestIplayerDocument { idoc: idr.unwrap() };
         let seldoc = tdoc.clone();
         let isel = tdoc.idoc.iplayer_selections();
-        let progpages = seldoc.programme_pages(&isel);
+        let progpages = tdoc.idoc.programme_pages(isel);
         assert_eq!(progpages.len(), 2);
         assert_eq!(progpages[0].url, "testhtml/adam_curtis.html");
         assert_eq!(progpages[1].url, "testhtml/storyville.html");
@@ -461,7 +462,7 @@ mod tests {
         let tdoc = TestIplayerDocument { idoc: idr.unwrap() };
         let seldoc = tdoc.clone();
         let isel = tdoc.idoc.iplayer_selections();
-        let progpages = seldoc.programme_pages(&isel);
+        let progpages = tdoc.idoc.programme_pages(isel);
         assert_eq!(progpages.len(), 20);
         assert_eq!(progpages[0].url, "testhtml/britains_best_home_cook.html");
         assert_eq!(progpages[1].url, "testhtml/britains_fat_fight.html");

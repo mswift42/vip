@@ -299,19 +299,7 @@ mod testutils {
             Ok(IplayerDocument { doc, url: self.url })
         }
     }
-
-    #[derive(Clone)]
-    pub struct TestIplayerDocument<'a> {
-        pub idoc: IplayerDocument<'a>,
-    }
-
-    impl<'a> TestIplayerDocument<'a> {
-        fn main_doc(&self) -> &IplayerDocument {
-            &self.idoc
-        }
-    }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -476,6 +464,5 @@ mod tests {
         };
         let idr = tu.load();
         assert!(idr.is_ok());
-        let tdoc = TestIplayerDocument { idoc: idr.unwrap() };
     }
 }

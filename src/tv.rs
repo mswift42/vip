@@ -448,10 +448,9 @@ mod tests {
         };
         let idr = tu.load();
         assert!(idr.is_ok());
-        let tdoc = TestIplayerDocument { idoc: idr.unwrap() };
-        let seldoc = tdoc.clone();
-        let isel = tdoc.idoc.iplayer_selections();
-        let progpages = tdoc.idoc.clone().programme_pages(isel);
+        let idoc = idr.unwrap();
+        let isel = idoc.iplayer_selections();
+        let progpages = idoc.clone().programme_pages(isel);
         assert_eq!(progpages.len(), 2);
         assert_eq!(progpages[0].url, "testhtml/adam_curtis.html");
         assert_eq!(progpages[1].url, "testhtml/storyville.html");
@@ -459,10 +458,9 @@ mod tests {
             url: "testhtml/food1.html"
         };
         let idr = tu.load();
-        let tdoc = TestIplayerDocument { idoc: idr.unwrap() };
-        let seldoc = tdoc.clone();
-        let isel = tdoc.idoc.iplayer_selections();
-        let progpages = tdoc.idoc.clone().programme_pages(isel);
+        let idoc = idr.unwrap();
+        let isel = idoc.iplayer_selections();
+        let progpages = idoc.clone().programme_pages(isel);
         assert_eq!(progpages.len(), 20);
         assert_eq!(progpages[0].url, "testhtml/britains_best_home_cook.html");
         assert_eq!(progpages[1].url, "testhtml/britains_fat_fight.html");

@@ -269,7 +269,7 @@ struct MainCategoryDocument<'a> {
     selections: Vec<IplayerSelection<'a>>,
 }
 
-impl<'a> BeebURL<'a> {
+impl<'a> DocumentLoader for BeebURL<'a> {
     fn load(&self) -> BoxResult<IplayerDocument> {
         let uri = url::Url::parse(self.url)?;
         let resp = reqwest::get(uri)?;

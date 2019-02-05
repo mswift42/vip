@@ -1,5 +1,6 @@
 use std::error;
 use std::fs;
+use std::thread;
 
 use select::document::Document;
 use select::node::Node;
@@ -294,6 +295,20 @@ mod testutils {
             Ok(IplayerDocument { doc, url: self.url })
         }
     }
+}
+
+pub fn collect_pages<'a>(urls: Vec<BeebURL>) -> Vec<IplayerDocument<'a>> {
+    let mut idocs: Vec<IplayerDocument> = Vec::new();
+    let handle = thread::spawn(move || {
+                for url in urls {
+                    let idocres = url.load();
+                    if idocres.is_ok() {
+                        idocs.push(idocres.unwrap())
+                    }
+                }
+    });
+    handle.join().unwrap();
+    idocs
 }
 
 #[cfg(test)]

@@ -464,11 +464,4 @@ mod tests {
         assert_eq!(progpages[3].url, "testhtml/delia_smiths_cookery_course.html");
         assert_eq!(progpages[19].url, "testhtml/top_of_the_shop_with_tom_kerridge.html");
     }
-
-    #[test]
-        let tu = testutils::TestHTMLURL {
-            url: "testhtml/food1.html"
-        };
-        let idr = tu.load();
-        assert!(idr.is_ok());
-    }
+}

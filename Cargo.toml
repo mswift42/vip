@@ -9,5 +9,4 @@ select = "0.4.2"
 url = "1.7.1"
 reqwest = "0.9.3"
 chashmap = "2.2.0"
-crossbeam = "0.7"
-
+futures-preview = "0.3.0-alpha.12"

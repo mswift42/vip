@@ -1,10 +1,10 @@
 use std::error;
 use std::fs;
-use crossbeam::thread;
 
 use select::document::Document;
 use select::node::Node;
 use select::predicate::{Class, Name, Predicate};
+use futures::future::Future;
 
 
 pub trait DocumentLoader {
@@ -298,15 +298,15 @@ mod testutils {
 }
 
 pub fn collect_pages<'a>(urls: Vec<BeebURL>) -> Vec<IplayerDocument<'a>> {
-    let mut idocs: Vec<IplayerDocument> = Vec::new();
-    thread::scope(|s| {
-        for url in urls {
-            s.spawn(move |_| {
-                idocs.push(url.load().unwrap());
-            });
-        }
-    }).unwrap();
-    idocs
+//    let mut idocs: Vec<IplayerDocument> = Vec::new();
+//    thread::scope(|s| {
+//        for url in urls {
+//            s.spawn(move |_| {
+//                idocs.push(url.load().unwrap());
+//            });
+//        }
+//    }).unwrap();
+//    idocs
 }
 
 #[cfg(test)]

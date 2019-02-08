@@ -17,7 +17,6 @@ pub trait NextPager {
     fn programme_pages(&self, _: Vec<IplayerSelection>) -> Vec<Box<dyn DocumentLoader>>;
 }
 
-
 type BoxResult<T> = Result<T, Box<error::Error>>;
 
 #[derive(Clone)]
@@ -270,8 +269,8 @@ struct MainCategoryDocument<'a> {
     selections: Vec<IplayerSelection<'a>>,
 }
 
-impl<'a> DocumentLoader for BeebURL<'a> {
-    fn load(&self) -> BoxResult<IplayerDocument> {
+impl<'a> BeebURL<'a> {
+    async fn load(&self) -> BoxResult<IplayerDocument<'a>> {
         let uri = url::Url::parse(self.url)?;
         let resp = reqwest::get(uri)?;
         let doc = select::document::Document::from_read(resp)?;
@@ -288,7 +287,7 @@ mod testutils {
     }
 
 
-    impl<'a> DocumentLoader for TestHTMLURL<'a> {
+    impl<'a> TestHTMLURL<'a> {
         fn load(&self) -> super::BoxResult<IplayerDocument> {
             let html = fs::read(self.url)?;
             let doc = Document::from_read(&html[..])?;
@@ -298,15 +297,8 @@ mod testutils {
 }
 
 pub fn collect_pages<'a>(urls: Vec<BeebURL>) -> Vec<IplayerDocument<'a>> {
-//    let mut idocs: Vec<IplayerDocument> = Vec::new();
-//    thread::scope(|s| {
-//        for url in urls {
-//            s.spawn(move |_| {
-//                idocs.push(url.load().unwrap());
-//            });
-//        }
-//    }).unwrap();
-//    idocs
+   let mut idocs: Vec<IplayerDocument> = Vec::new();
+    idocs
 }
 
 #[cfg(test)]

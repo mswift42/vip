@@ -288,7 +288,7 @@ mod testutils {
 
 
     impl<'a> TestHTMLURL<'a> {
-        fn load(&self) -> super::BoxResult<IplayerDocument> {
+        pub fn load(&self) -> super::BoxResult<IplayerDocument> {
             let html = fs::read(self.url)?;
             let doc = Document::from_read(&html[..])?;
             Ok(IplayerDocument { doc, url: self.url })

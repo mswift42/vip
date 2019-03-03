@@ -5,6 +5,7 @@ use select::document::Document;
 use select::node::Node;
 use select::predicate::{Class, Name, Predicate};
 use futures::future::Future;
+use reqwest::async::Client;
 
 
 pub trait DocumentLoader {
@@ -270,11 +271,19 @@ struct MainCategoryDocument<'a> {
 }
 
 impl<'a> BeebURL<'a> {
-    async fn load(&self) -> BoxResult<IplayerDocument<'a>> {
+    fn load(&self) -> BoxResult<IplayerDocument<'a>> {
         let uri = url::Url::parse(self.url)?;
         let resp = reqwest::get(uri)?;
         let doc = select::document::Document::from_read(resp)?;
         Ok(IplayerDocument { doc, url: self.url })
+    }
+
+    fn load_async(&self) -> BoxResult<IplayerDocument<'a>> {
+        let client = Client::new();
+        let rb = client.get(self.url);
+        let resp = rb.send().and_then(|res|
+        select::document::Document::from_read(res));
+        Ok(IplayerDocument{doc: resp, url: self.url})
     }
 }
 

@@ -5,8 +5,23 @@ use select::document::Document;
 use select::node::Node;
 use select::predicate::{Class, Name, Predicate};
 use futures::future::Future;
-use reqwest::async::Client;
+use reqwest::r#async::Client;
 
+
+pub struct BeebURL<'a> {
+    url: &'a str,
+}
+
+impl<'a> BeebURL<'a> {
+
+    fn load_async(&self) -> BoxResult<IplayerDocument<'a>> {
+        let client = Client::new();
+        let rb = client.get(self.url);
+        let resp = rb.send().and_then(|res|
+            select::document::Document::from_read(res));
+        Ok(IplayerDocument{doc: resp, url: self.url})
+    }
+}
 
 pub trait DocumentLoader {
     fn load(&self) -> BoxResult<IplayerDocument>;
@@ -68,9 +83,6 @@ impl<'a> IplayerDocument<'a> {
     }
 }
 
-pub struct BeebURL<'a> {
-    url: &'a str,
-}
 
 static BBCPREFIX: &'static str = "https://bbc.co.uk";
 
@@ -269,24 +281,15 @@ struct MainCategoryDocument<'a> {
     programme_page_docs: Vec<IplayerDocument<'a>>,
     selections: Vec<IplayerSelection<'a>>,
 }
-
 impl<'a> BeebURL<'a> {
+
     fn load(&self) -> BoxResult<IplayerDocument<'a>> {
         let uri = url::Url::parse(self.url)?;
         let resp = reqwest::get(uri)?;
         let doc = select::document::Document::from_read(resp)?;
         Ok(IplayerDocument { doc, url: self.url })
     }
-
-    fn load_async(&self) -> BoxResult<IplayerDocument<'a>> {
-        let client = Client::new();
-        let rb = client.get(self.url);
-        let resp = rb.send().and_then(|res|
-        select::document::Document::from_read(res));
-        Ok(IplayerDocument{doc: resp, url: self.url})
-    }
 }
-
 
 mod testutils {
     use super::*;

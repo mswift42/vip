@@ -41,7 +41,7 @@ pub struct IplayerDocument<'a> {
     url: &'a str,
 }
 
-impl<'a> IplayerDocument<'a> {
+impl IplayerDocument<'_> {
     fn programme_nodes(&self) -> Vec<Option<IplayerNode>> {
         self.doc
             .find(Class("content-item"))
@@ -73,7 +73,7 @@ fn np_page_options<'a>(idoc: &'a IplayerDocument) -> Vec<&'a str> {
         .collect()
 }
 
-impl<'a> IplayerDocument<'a> {
+impl IplayerDocument<'_> {
     fn iplayer_selections(&self) -> Vec<IplayerSelection> {
         self.doc
             .find(Class("content-item"))

@@ -14,13 +14,13 @@ pub struct BeebURL<'a> {
 
 impl<'a> BeebURL<'a> {
 
-    fn load_async(&self) -> BoxResult<IplayerDocument<'a>> {
-        let client = Client::new();
-        let rb = client.get(self.url);
-        let resp = rb.send().and_then(|res|
-            select::document::Document::from_read(res));
-        Ok(IplayerDocument{doc: resp, url: self.url})
-    }
+//    fn load_async(&self) -> BoxResult<IplayerDocument<'a>> {
+//        let client = Client::new();
+//        let rb = client.get(self.url);
+//        let resp = rb.send().and_then(|res|
+//            select::document::Document::from_read(res));
+//        Ok(IplayerDocument{doc: resp, url: self.url})
+//    }
 }
 
 pub trait DocumentLoader {

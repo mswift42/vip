@@ -33,7 +33,7 @@ pub trait NextPager {
     fn programme_pages(&self, _: Vec<IplayerSelection>) -> Vec<Box<dyn DocumentLoader>>;
 }
 
-type BoxResult<T> = Result<T, Box<error::Error>>;
+type BoxResult<T> = Result<T, Box<dyn error::Error>>;
 
 #[derive(Clone)]
 pub struct IplayerDocument<'a> {
@@ -353,14 +353,14 @@ mod tests {
             .filter(|node| IplayerNode { node: *node }.programme_site().is_some())
             .map(|node| IplayerNode { node })
             .collect();
-        assert_eq!(sites.len(), 2);
+        assert_eq!(sites.len(), 3);
         assert_eq!(
             sites[0].programme_site().unwrap(),
             "testhtml/adam_curtis.html"
         );
         assert_eq!(
             sites[1].programme_site().unwrap(),
-            "testhtml/storyville.html"
+            "/iplayer/episodes/b08kfrzk/home-from-home-chronicle-of-a-vision"
         );
         let tu = testutils::TestHTMLURL {
             url: "testhtml/food1.html",
@@ -423,7 +423,7 @@ mod tests {
     #[test]
     fn test_next_pages() {
         let tu = testutils::TestHTMLURL {
-            url: "testhtml/comedy1.html"
+            url: "testhtml/films1.html"
         };
         let idr = tu.load();
         assert!(idr.is_ok());

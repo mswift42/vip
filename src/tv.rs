@@ -60,8 +60,8 @@ impl IplayerDocument<'_> {
     }
 
     fn programme_pages(self, selections: Vec<IplayerSelection>) -> Vec<Box<BeebURL>> {
-        selections.iter().filter(|sel| sel.programme_page.is_some())
-            .map(|opturl| Box::new(BeebURL { url: opturl.programme_page.unwrap() }))
+        selections.iter().filter(|sel| sel.programme_page_url.is_some())
+            .map(|opturl| Box::new(BeebURL { url: opturl.programme_page_url.unwrap() }))
             .collect()
     }
 }
@@ -93,8 +93,8 @@ struct ProgrammePage<'a> {
 
 #[derive(Clone)]
 pub struct IplayerSelection<'a> {
-    pub prog: Option<Programme<'a>>,
-    pub programme_page: Option<&'a str>,
+    pub programme: Option<Programme<'a>>,
+    pub programme_page_url: Option<&'a str>,
 }
 
 impl<'a> IplayerSelection<'a> {
@@ -103,12 +103,12 @@ impl<'a> IplayerSelection<'a> {
         let subtitle = inode.subtitle();
         match inode.programme_site() {
             None => IplayerSelection {
-                prog: Some(Programme::new(title, subtitle, inode)),
-                programme_page: None,
+                programme: Some(Programme::new(title, subtitle, inode)),
+                programme_page_url: None,
             },
             Some(u) => IplayerSelection {
-                prog: None,
-                programme_page: Some(u),
+                programme: None,
+                programme_page_url: Some(u),
             },
         }
     }
@@ -402,9 +402,9 @@ mod tests {
         let id = idr.unwrap();
         let isels = id.iplayer_selections();
         assert_eq!(isels.len(), 36);
-        let prog_sites = isels.iter().filter(|sel| sel.programme_page.is_some());
+        let prog_sites = isels.iter().filter(|sel| sel.programme_page_url.is_some());
         assert_eq!(prog_sites.count(), 3);
-        let progs = isels.iter().filter(|sel| sel.prog.is_some());
+        let progs = isels.iter().filter(|sel| sel.programme.is_some());
         assert_eq!(progs.count(), 33);
         let tu = TestHTMLURL {
             url: "testhtml/food1.html",
@@ -414,10 +414,10 @@ mod tests {
         let id = idr.unwrap();
         let isel = id.iplayer_selections();
         assert_eq!(isel.len(), 36);
-        let prog_sites = isel.iter().filter(|sel| sel.programme_page.is_some());
+        let prog_sites = isel.iter().filter(|sel| sel.programme_page_url.is_some());
         assert_eq!(prog_sites.count(), 31);
-//        let progs = isels.iter().filter(|sel| sel.prog.is_some());
-//        assert_eq!(progs.count(), 22);
+        let progs = isels.iter().filter(|sel| sel.programme.is_none());
+        assert_eq!(progs.count(), 22);
     }
 
     #[test]

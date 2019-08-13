@@ -430,7 +430,7 @@ mod tests {
         let idoc = idr.unwrap();
         let np = idoc.next_pages();
         assert_eq!(np.len(), 1);
-        assert_eq!(np[0].url, "testhtml/comedy2.html");
+        assert_eq!(np[0].url, "?page=2");
         let tu = testutils::TestHTMLURL {
             url: "testhtml/food1.html"
         };

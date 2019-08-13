@@ -376,19 +376,19 @@ mod tests {
         assert_eq!(sites.len(), 31);
         assert_eq!(
             sites[0].programme_site().unwrap(),
-            "testhtml/britains_best_home_cook.html"
+            "/iplayer/episodes/b052hdnr/a-cook-abroad"
         );
         assert_eq!(
             sites[1].programme_site().unwrap(),
-            "testhtml/britains_fat_fight.html"
+            "/iplayer/episodes/b0863g11/best-bakes-ever"
         );
         assert_eq!(
             sites[2].programme_site().unwrap(),
-            "testhtml/caribbean_food_made_easy.html"
+            "/iplayer/episodes/b00mh31r/caribbean-food-made-easy"
         );
         assert_eq!(
             sites[3].programme_site().unwrap(),
-            "testhtml/delia_smiths_cookery_course.html"
+            "/iplayer/episodes/m00077h7/the-chefs-brigade"
         );
     }
 
@@ -462,10 +462,9 @@ mod tests {
         let isel = idoc.iplayer_selections();
         let progpages = idoc.clone().programme_pages(isel);
         assert_eq!(progpages.len(), 31);
-        assert_eq!(progpages[0].url, "testhtml/britains_best_home_cook.html");
-        assert_eq!(progpages[1].url, "testhtml/britains_fat_fight.html");
-        assert_eq!(progpages[2].url, "testhtml/caribbean_food_made_easy.html");
-        assert_eq!(progpages[3].url, "testhtml/delia_smiths_cookery_course.html");
-        assert_eq!(progpages[19].url, "testhtml/top_of_the_shop_with_tom_kerridge.html");
+        assert_eq!(progpages[0].url, "/iplayer/episodes/b052hdnr/a-cook-abroad");
+        assert_eq!(progpages[1].url, "/iplayer/episodes/b0863g11/best-bakes-ever");
+        assert_eq!(progpages[2].url, "/iplayer/episodes/b00mh31r/caribbean-food-made-easy");
+        assert_eq!(progpages[3].url, "/iplayer/episodes/m00077h7/the-chefs-brigade");
     }
 }

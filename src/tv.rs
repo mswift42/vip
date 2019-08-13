@@ -373,7 +373,7 @@ mod tests {
             .filter(|node| IplayerNode { node: *node }.programme_site().is_some())
             .map(|node| IplayerNode { node })
             .collect();
-        assert_eq!(sites.len(), 20);
+        assert_eq!(sites.len(), 31);
         assert_eq!(
             sites[0].programme_site().unwrap(),
             "testhtml/britains_best_home_cook.html"
@@ -413,11 +413,11 @@ mod tests {
         assert!(idr.is_ok());
         let id = idr.unwrap();
         let isel = id.iplayer_selections();
-        assert_eq!(isel.len(), 26);
+        assert_eq!(isel.len(), 36);
         let prog_sites = isel.iter().filter(|sel| sel.programme_page.is_some());
-        assert_eq!(prog_sites.count(), 20);
-        let progs = isels.iter().filter(|sel| sel.prog.is_some());
-        assert_eq!(progs.count(), 22);
+        assert_eq!(prog_sites.count(), 31);
+//        let progs = isels.iter().filter(|sel| sel.prog.is_some());
+//        assert_eq!(progs.count(), 22);
     }
 
     #[test]
@@ -453,7 +453,7 @@ mod tests {
         let progpages = idoc.clone().programme_pages(isel);
         assert_eq!(progpages.len(), 3);
         assert_eq!(progpages[0].url, "testhtml/adam_curtis.html");
-        assert_eq!(progpages[1].url, "testhtml/storyville.html");
+        assert_eq!(progpages[1].url, "/iplayer/episodes/b08kfrzk/home-from-home-chronicle-of-a-vision");
         let tu = testutils::TestHTMLURL {
             url: "testhtml/food1.html"
         };
@@ -461,7 +461,7 @@ mod tests {
         let idoc = idr.unwrap();
         let isel = idoc.iplayer_selections();
         let progpages = idoc.clone().programme_pages(isel);
-        assert_eq!(progpages.len(), 20);
+        assert_eq!(progpages.len(), 31);
         assert_eq!(progpages[0].url, "testhtml/britains_best_home_cook.html");
         assert_eq!(progpages[1].url, "testhtml/britains_fat_fight.html");
         assert_eq!(progpages[2].url, "testhtml/caribbean_food_made_easy.html");

@@ -401,11 +401,11 @@ mod tests {
         assert!(idr.is_ok());
         let id = idr.unwrap();
         let isels = id.iplayer_selections();
-        assert_eq!(isels.len(), 24);
+        assert_eq!(isels.len(), 36);
         let prog_sites = isels.iter().filter(|sel| sel.programme_page.is_some());
-        assert_eq!(prog_sites.count(), 2);
+        assert_eq!(prog_sites.count(), 3);
         let progs = isels.iter().filter(|sel| sel.prog.is_some());
-        assert_eq!(progs.count(), 22);
+        assert_eq!(progs.count(), 33);
         let tu = TestHTMLURL {
             url: "testhtml/food1.html",
         };
@@ -451,7 +451,7 @@ mod tests {
         let idoc = idr.unwrap();
         let isel = idoc.iplayer_selections();
         let progpages = idoc.clone().programme_pages(isel);
-        assert_eq!(progpages.len(), 2);
+        assert_eq!(progpages.len(), 3);
         assert_eq!(progpages[0].url, "testhtml/adam_curtis.html");
         assert_eq!(progpages[1].url, "testhtml/storyville.html");
         let tu = testutils::TestHTMLURL {

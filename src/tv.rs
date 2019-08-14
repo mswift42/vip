@@ -446,6 +446,16 @@ mod tests {
     }
 
     #[test]
+    fn test_boxset() {
+        let tu = testutils::TestHTMLURL {
+            url: "testhtml/peaky_blinders.html",
+        };
+        let idr = tu.load();
+        assert!(idr.is_ok());
+        let idoc = idr.unwrap();
+    }
+
+    #[test]
     fn test_programme_pages() {
         let tu = testutils::TestHTMLURL {
             url: "testhtml/films1.html",

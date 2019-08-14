@@ -1,26 +1,24 @@
 use std::error;
 use std::fs;
 
+use futures::future::Future;
+use reqwest::r#async::Client;
 use select::document::Document;
 use select::node::Node;
 use select::predicate::{Class, Name, Predicate};
-use futures::future::Future;
-use reqwest::r#async::Client;
-
 
 pub struct BeebURL<'a> {
     url: &'a str,
 }
 
 impl<'a> BeebURL<'a> {
-
-//    fn load_async(&self) -> BoxResult<IplayerDocument<'a>> {
-//        let client = Client::new();
-//        let rb = client.get(self.url);
-//        let resp = rb.send().and_then(|res|
-//            select::document::Document::from_read(res));
-//        Ok(IplayerDocument{doc: resp, url: self.url})
-//    }
+    //    fn load_async(&self) -> BoxResult<IplayerDocument<'a>> {
+    //        let client = Client::new();
+    //        let rb = client.get(self.url);
+    //        let resp = rb.send().and_then(|res|
+    //            select::document::Document::from_read(res));
+    //        Ok(IplayerDocument{doc: resp, url: self.url})
+    //    }
 }
 
 pub trait DocumentLoader {
@@ -48,7 +46,8 @@ impl IplayerDocument<'_> {
             .map(|nd| match nd.next() {
                 None => None,
                 Some(nod) => Some(IplayerNode { node: nod }),
-            }).collect()
+            })
+            .collect()
     }
 
     fn main_doc(&self) -> &IplayerDocument {
@@ -56,19 +55,28 @@ impl IplayerDocument<'_> {
     }
 
     fn next_pages(&self) -> Vec<Box<BeebURL>> {
-        np_page_options(self).iter().map(|url| Box::new(BeebURL { url })).collect()
+        np_page_options(self)
+            .iter()
+            .map(|url| Box::new(BeebURL { url }))
+            .collect()
     }
 
     fn programme_pages(self, selections: Vec<IplayerSelection>) -> Vec<Box<BeebURL>> {
-        selections.iter().filter(|sel| sel.programme_page_url.is_some())
-            .map(|opturl| Box::new(BeebURL { url: opturl.programme_page_url.unwrap() }))
+        selections
+            .iter()
+            .filter(|sel| sel.programme_page_url.is_some())
+            .map(|opturl| {
+                Box::new(BeebURL {
+                    url: opturl.programme_page_url.unwrap(),
+                })
+            })
             .collect()
     }
 }
 
 fn np_page_options<'a>(idoc: &'a IplayerDocument) -> Vec<&'a str> {
-    idoc.doc.find(Class("pagination__number")
-        .descendant(Name("a")))
+    idoc.doc
+        .find(Class("pagination__number").descendant(Name("a")))
         .filter_map(|n| n.attr("href"))
         .collect()
 }
@@ -83,9 +91,7 @@ impl IplayerDocument<'_> {
     }
 }
 
-
 static BBCPREFIX: &'static str = "https://bbc.co.uk";
-
 
 struct ProgrammePage<'a> {
     idoc: IplayerDocument<'a>,
@@ -139,10 +145,10 @@ impl<'a> IplayerNode<'a> {
             .next()?
             .find(Class("content-item__description"))
             .next()
-            {
-                None => None,
-                Some(nd) => Some(nd.text()),
-            }
+        {
+            None => None,
+            Some(nd) => Some(nd.text()),
+        }
     }
 
     fn synopsis(&self) -> Option<String> {
@@ -154,10 +160,10 @@ impl<'a> IplayerNode<'a> {
             .next()?
             .find(Class("content-item__description"))
             .next()
-            {
-                None => None,
-                Some(nd) => Some(nd.text()),
-            }
+        {
+            None => None,
+            Some(nd) => Some(nd.text()),
+        }
     }
 
     fn url(&self) -> Option<&'a str> {
@@ -176,10 +182,10 @@ impl<'a> IplayerNode<'a> {
             .find(Class("source"))
             .next()?
             .attr("srcset")
-            {
-                None => None,
-                Some(set) => set.split(' ').next(),
-            }
+        {
+            None => None,
+            Some(set) => set.split(' ').next(),
+        }
     }
 
     fn available(&self) -> Option<String> {
@@ -191,10 +197,10 @@ impl<'a> IplayerNode<'a> {
             .next()?
             .find(Name("span"))
             .last()
-            {
-                None => None,
-                Some(sp) => Some(sp.text()),
-            }
+        {
+            None => None,
+            Some(sp) => Some(sp.text()),
+        }
     }
 
     fn duration(&self) -> Option<String> {
@@ -206,10 +212,10 @@ impl<'a> IplayerNode<'a> {
             .next()?
             .find(Name("span"))
             .next()
-            {
-                None => None,
-                Some(sp) => Some(sp.text()),
-            }
+        {
+            None => None,
+            Some(sp) => Some(sp.text()),
+        }
     }
     fn iplayer_selections(&self) -> Vec<IplayerSelection<'a>> {
         self.node
@@ -282,7 +288,6 @@ struct MainCategoryDocument<'a> {
     selections: Vec<IplayerSelection<'a>>,
 }
 impl<'a> BeebURL<'a> {
-
     fn load(&self) -> BoxResult<IplayerDocument<'a>> {
         let uri = url::Url::parse(self.url)?;
         let resp = reqwest::get(uri)?;
@@ -298,7 +303,6 @@ mod testutils {
         pub url: &'a str,
     }
 
-
     impl<'a> TestHTMLURL<'a> {
         pub fn load(&self) -> super::BoxResult<IplayerDocument> {
             let html = fs::read(self.url)?;
@@ -309,7 +313,7 @@ mod testutils {
 }
 
 pub fn collect_pages<'a>(urls: Vec<BeebURL>) -> Vec<IplayerDocument<'a>> {
-   let mut idocs: Vec<IplayerDocument> = Vec::new();
+    let mut idocs: Vec<IplayerDocument> = Vec::new();
     idocs
 }
 
@@ -417,13 +421,13 @@ mod tests {
         let prog_sites = isel.iter().filter(|sel| sel.programme_page_url.is_some());
         assert_eq!(prog_sites.count(), 31);
         let progs = isels.iter().filter(|sel| sel.programme.is_none());
-        assert_eq!(progs.count(), 22);
+        assert_eq!(progs.count(), 3);
     }
 
     #[test]
     fn test_next_pages() {
         let tu = testutils::TestHTMLURL {
-            url: "testhtml/films1.html"
+            url: "testhtml/films1.html",
         };
         let idr = tu.load();
         assert!(idr.is_ok());
@@ -432,7 +436,7 @@ mod tests {
         assert_eq!(np.len(), 1);
         assert_eq!(np[0].url, "?page=2");
         let tu = testutils::TestHTMLURL {
-            url: "testhtml/food1.html"
+            url: "testhtml/food1.html",
         };
         let idr = tu.load();
         assert!(idr.is_ok());
@@ -444,7 +448,7 @@ mod tests {
     #[test]
     fn test_programme_pages() {
         let tu = testutils::TestHTMLURL {
-            url: "testhtml/films1.html"
+            url: "testhtml/films1.html",
         };
         let idr = tu.load();
         assert!(idr.is_ok());
@@ -453,9 +457,12 @@ mod tests {
         let progpages = idoc.clone().programme_pages(isel);
         assert_eq!(progpages.len(), 3);
         assert_eq!(progpages[0].url, "testhtml/adam_curtis.html");
-        assert_eq!(progpages[1].url, "/iplayer/episodes/b08kfrzk/home-from-home-chronicle-of-a-vision");
+        assert_eq!(
+            progpages[1].url,
+            "/iplayer/episodes/b08kfrzk/home-from-home-chronicle-of-a-vision"
+        );
         let tu = testutils::TestHTMLURL {
-            url: "testhtml/food1.html"
+            url: "testhtml/food1.html",
         };
         let idr = tu.load();
         let idoc = idr.unwrap();
@@ -463,8 +470,17 @@ mod tests {
         let progpages = idoc.clone().programme_pages(isel);
         assert_eq!(progpages.len(), 31);
         assert_eq!(progpages[0].url, "/iplayer/episodes/b052hdnr/a-cook-abroad");
-        assert_eq!(progpages[1].url, "/iplayer/episodes/b0863g11/best-bakes-ever");
-        assert_eq!(progpages[2].url, "/iplayer/episodes/b00mh31r/caribbean-food-made-easy");
-        assert_eq!(progpages[3].url, "/iplayer/episodes/m00077h7/the-chefs-brigade");
+        assert_eq!(
+            progpages[1].url,
+            "/iplayer/episodes/b0863g11/best-bakes-ever"
+        );
+        assert_eq!(
+            progpages[2].url,
+            "/iplayer/episodes/b00mh31r/caribbean-food-made-easy"
+        );
+        assert_eq!(
+            progpages[3].url,
+            "/iplayer/episodes/m00077h7/the-chefs-brigade"
+        );
     }
 }

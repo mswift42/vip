@@ -4,6 +4,7 @@ use std::fs;
 use futures::future::Future;
 use reqwest::r#async::Client;
 use select::document::Document;
+use select::document::Find;
 use select::node::Node;
 use select::predicate::{Class, Name, Predicate};
 
@@ -296,6 +297,13 @@ impl<'a> BeebURL<'a> {
     }
 }
 
+fn programme_sites<'a>(nodes: Find<'a, Class<&str>>) -> Vec<IplayerNode<'a>> {
+    nodes
+        .filter(|node| IplayerNode { node: *node }.programme_site().is_some())
+        .map(|node| IplayerNode { node })
+        .collect()
+}
+
 mod testutils {
     use super::*;
 
@@ -353,10 +361,11 @@ mod tests {
         assert!(idr.is_ok());
         let id = idr.unwrap();
         let nodes = id.doc.find(Class("content-item"));
-        let sites: Vec<IplayerNode> = nodes
-            .filter(|node| IplayerNode { node: *node }.programme_site().is_some())
-            .map(|node| IplayerNode { node })
-            .collect();
+        //        let sites: Vec<IplayerNode> = nodes
+        //            .filter(|node| IplayerNode { node: *node }.programme_site().is_some())
+        //            .map(|node| IplayerNode { node })
+        //            .collect();
+        let sites = programme_sites(nodes);
         assert_eq!(sites.len(), 3);
         assert_eq!(
             sites[0].programme_site().unwrap(),
@@ -373,10 +382,7 @@ mod tests {
         assert!(idr.is_ok());
         let id = idr.unwrap();
         let nodes = id.doc.find(Class("content-item"));
-        let sites: Vec<IplayerNode> = nodes
-            .filter(|node| IplayerNode { node: *node }.programme_site().is_some())
-            .map(|node| IplayerNode { node })
-            .collect();
+        let sites = programme_sites(nodes);
         assert_eq!(sites.len(), 31);
         assert_eq!(
             sites[0].programme_site().unwrap(),

@@ -73,6 +73,10 @@ impl IplayerDocument<'_> {
             })
             .collect()
     }
+
+    fn is_boxset(&self) -> bool {
+        self.doc.find(Class("series-nav")).next().is_some()
+    }
 }
 
 fn np_page_options<'a>(idoc: &'a IplayerDocument) -> Vec<&'a str> {
@@ -361,10 +365,6 @@ mod tests {
         assert!(idr.is_ok());
         let id = idr.unwrap();
         let nodes = id.doc.find(Class("content-item"));
-        //        let sites: Vec<IplayerNode> = nodes
-        //            .filter(|node| IplayerNode { node: *node }.programme_site().is_some())
-        //            .map(|node| IplayerNode { node })
-        //            .collect();
         let sites = programme_sites(nodes);
         assert_eq!(sites.len(), 3);
         assert_eq!(
@@ -459,6 +459,17 @@ mod tests {
         let idr = tu.load();
         assert!(idr.is_ok());
         let idoc = idr.unwrap();
+        assert!(idoc.is_boxset());
+        let tu = testutils::TestHTMLURL {
+            url: "testhtml/adam_curtis.html",
+        };
+        let idr = tu.load();
+        assert_eq!(idr.unwrap().is_boxset(), false);
+        let tu = testutils::TestHTMLURL {
+            url: "testhtml/gentleman_jack.html",
+        };
+        let idr = tu.load();
+        assert_eq!(idr.unwrap().is_boxset(), false);
     }
 
     #[test]

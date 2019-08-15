@@ -300,6 +300,7 @@ struct MainCategoryDocument<'a> {
     programme_page_docs: Vec<IplayerDocument<'a>>,
     selections: Vec<IplayerSelection<'a>>,
 }
+
 impl<'a> BeebURL<'a> {
     fn load(&self) -> BoxResult<IplayerDocument<'a>> {
         let uri = url::Url::parse(self.url)?;
@@ -480,7 +481,28 @@ mod tests {
         let id = idr.unwrap();
         assert_eq!(id.clone().is_boxset(), false);
         let urls = id.series_urls();
+        assert_eq!(urls.len(), 0);
+
+        let tu = testutils::TestHTMLURL {
+            url: "testhtml/peaky_blinders.html",
+        };
+        let idr = tu.load();
+        let id = idr.unwrap();
+        assert_eq!(id.clone().is_boxset(), true);
+        let urls = id.series_urls();
         assert_eq!(urls.len(), 3);
+        assert_eq!(
+            urls[0].url,
+            "/iplayer/episodes/b045fz8r/peaky-blinders?seriesId=b04kkm8q",
+        );
+        assert_eq!(
+            urls[1].url,
+            "/iplayer/episodes/b045fz8r/peaky-blinders?seriesId=b079vp14"
+        );
+        assert_eq!(
+            urls[2].url,
+            "/iplayer/episodes/b045fz8r/peaky-blinders?seriesId=p05hgs13"
+        );
     }
 
     #[test]

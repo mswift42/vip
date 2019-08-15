@@ -79,11 +79,13 @@ impl IplayerDocument<'_> {
     }
 
     fn series_urls(&self) -> Vec<Box<BeebURL>> {
-        let urls = self.doc
+        let urls: Vec<&str> = self
+            .doc
             .find(Name("a").and(Class("series-nav__button")))
             .filter_map(|n| n.attr("href"))
             .collect();
-        urls.iter().map(|u| Box::new(BeebURL{url: u}))
+        urls.iter().map(|u| Box::new(BeebURL { url: u })).collect()
+    }
 }
 
 fn np_page_options<'a>(idoc: &'a IplayerDocument) -> Vec<&'a str> {

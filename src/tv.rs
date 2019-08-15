@@ -79,12 +79,11 @@ impl IplayerDocument<'_> {
     }
 
     fn series_urls(&self) -> Vec<Box<BeebURL>> {
-        let urls: Vec<&str> = self
+        let urls = self
             .doc
             .find(Name("a").and(Class("series-nav__button")))
-            .filter_map(|n| n.attr("href"))
-            .collect();
-        urls.iter().map(|u| Box::new(BeebURL { url: u })).collect()
+            .filter_map(|n| n.attr("href"));
+        urls.map(|u| Box::new(BeebURL { url: u })).collect()
     }
 }
 
@@ -478,7 +477,10 @@ mod tests {
             url: "testhtml/gentleman_jack.html",
         };
         let idr = tu.load();
-        assert_eq!(idr.unwrap().is_boxset(), false);
+        let id = idr.unwrap();
+        assert_eq!(id.clone().is_boxset(), false);
+        let urls = id.series_urls();
+        assert_eq!(urls.len(), 3);
     }
 
     #[test]

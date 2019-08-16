@@ -503,6 +503,19 @@ mod tests {
             urls[2].url,
             "/iplayer/episodes/b045fz8r/peaky-blinders?seriesId=p05hgs13"
         );
+
+        let tu = testutils::TestHTMLURL {
+            url: "testhtml/wrong_mans.html",
+        };
+        let idr = tu.load();
+        let id = idr.unwrap();
+        assert_eq!(id.clone().is_boxset(), true);
+        let urls = id.series_urls();
+        assert_eq!(urls.len(), 1);
+        assert_eq!(
+            urls[0].url,
+            "/iplayer/episodes/p02bhkmm/the-wrong-mans?seriesId=p02bhlq2"
+        )
     }
 
     #[test]

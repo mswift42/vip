@@ -349,15 +349,19 @@ mod testutils {
 
 pub fn collect_pages<'a>(urls: Vec<BeebURL>) -> Vec<IplayerDocument<'a>> {
     let mut idocs: Vec<IplayerDocument> = Vec::new();
-    let handle = thread::spawn(|| {
-        for i in urls {
+    let mut handles = vec![];
+    for i in urls {
+        let handle = thread::spawn(move || {
             let res = i.load();
             if res.is_ok() {
                 idocs.push(res.unwrap());
             }
-        }
-    });
-    handle.join().unwrap();
+            handles.push(handle);
+        });
+    }
+    for handle in handles {
+        handle.join().unwrap();
+    }
     idocs
 }
 

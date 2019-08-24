@@ -23,17 +23,6 @@ impl<'a> BeebURL<'a> {
     //         url: self.urli,
     //     })
     // }
-    //    fn load_async(&self) -> BoxResult<IplayerDocument<'a>> {
-    //        let client = Client::new();
-    //        let rb = client.get(self.url);
-    //        let resp = rb
-    //            .send()
-    //            .and_then(|res| select::document::Document::from_read(res));
-    //        Ok(IplayerDocument {
-    //            doc: resp,
-    //            url: self.url,
-    //        })
-    //    }
 }
 
 pub trait DocumentLoader {
@@ -322,6 +311,10 @@ impl<'a> BeebURL<'a> {
         let doc = select::document::Document::from_read(resp)?;
         Ok(IplayerDocument { doc, url: self.url })
     }
+
+    // async fn load_async(&self) -> BoxResult<IplayerDocument<'a>> {
+
+    // }
 }
 
 fn programme_sites<'a>(nodes: Find<'a, Class<&str>>) -> Vec<IplayerNode<'a>> {
@@ -347,21 +340,21 @@ mod testutils {
     }
 }
 
-pub fn collect_pages<'a>(urls: Vec<BeebURL>) -> Vec<IplayerDocument<'a>> {
+async fn collect_pages<'a>(urls: Vec<BeebURL<'_>>) -> Vec<IplayerDocument<'a>> {
     let mut idocs: Vec<IplayerDocument> = Vec::new();
-    let mut handles = vec![];
-    for i in urls {
-        let handle = thread::spawn(move || {
-            let res = i.load();
-            if res.is_ok() {
-                idocs.push(res.unwrap());
-            }
-            handles.push(handle);
-        });
-    }
-    for handle in handles {
-        handle.join().unwrap();
-    }
+    //    let mut handles = vec![];
+    //    for i in urls {
+    //        let handle = thread::spawn(move || {
+    //            let res = i.load();
+    //            if res.is_ok() {
+    //                idocs.push(res.unwrap());
+    //            }
+    //        });
+    //        handles.push(handle);
+    //    }
+    //    for handle in handles {
+    //        handle.join().unwrap();
+    //    }
     idocs
 }
 

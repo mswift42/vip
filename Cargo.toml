@@ -9,4 +9,5 @@ select = "0.4.3"
 url = "1.7.1"
 reqwest = "0.9.19"
 chashmap = "2.2.0"
+crossbeam = "0.7.2"
 futures-preview = { version = "=0.3.0-alpha.18", features = ["async-await", "nightly"] }

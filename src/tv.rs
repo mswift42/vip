@@ -1,13 +1,14 @@
 use std::error;
 use std::fs;
 
+use crossbeam::thread;
 use futures::{Future, Stream};
 use reqwest::r#async::{Client, Response};
 use select::document::Document;
 use select::document::Find;
 use select::node::Node;
 use select::predicate::{Class, Name, Predicate};
-use std::thread;
+
 
 pub struct BeebURL<'a> {
     url: &'a str,
@@ -312,6 +313,11 @@ impl<'a> BeebURL<'a> {
         Ok(IplayerDocument { doc, url: self.url })
     }
 
+//    async fn load_async(&self) -> BoxResult<IplayerDocument<'a>> {
+//        let uri = url::Url::parse(self.url)?;
+//
+//    }
+
     // async fn load_async(&self) -> BoxResult<IplayerDocument<'a>> {
 
     // }
@@ -340,21 +346,16 @@ mod testutils {
     }
 }
 
-async fn collect_pages<'a>(urls: Vec<BeebURL<'_>>) -> Vec<IplayerDocument<'a>> {
-    let mut idocs: Vec<IplayerDocument> = Vec::new();
-    //    let mut handles = vec![];
-    //    for i in urls {
-    //        let handle = thread::spawn(move || {
-    //            let res = i.load();
-    //            if res.is_ok() {
-    //                idocs.push(res.unwrap());
-    //            }
-    //        });
-    //        handles.push(handle);
-    //    }
-    //    for handle in handles {
-    //        handle.join().unwrap();
-    //    }
+async fn collect_pages<'a>(urls: Vec<BeebURL<'_>>) -> Vec<BoxResult<IplayerDocument<'a>>> {
+    let mut idocs: Vec<BoxResult<IplayerDocument>> = Vec::new();
+    thread::scope(|s| {
+        for url in &urls {
+            s.spawn(move |_| {
+                idocs.push(url.load())
+            });
+        }
+    }).unwrap();
+
     idocs
 }
 

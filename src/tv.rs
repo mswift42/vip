@@ -36,7 +36,9 @@ pub trait NextPager {
     fn programme_pages(&self, _: Vec<IplayerSelection>) -> Vec<Box<dyn DocumentLoader>>;
 }
 
-type BoxResult<T> = Result<T, Box<dyn error::Error>>;
+pub type Error = Box<dyn error::Error + Send + Sync + 'static>;
+
+type BoxResult<T> = Result<T, Error>;
 
 #[derive(Clone)]
 pub struct IplayerDocument<'a> {

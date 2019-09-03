@@ -3,27 +3,26 @@ use std::fs;
 
 use crossbeam::thread;
 use futures::{Future, Stream};
-use reqwest::r#async::{Client, Response};
+use hyper::{Body, Client, Request, Response, Uri };
 use select::document::Document;
 use select::document::Find;
-use select::node::Node;
 use select::predicate::{Class, Name, Predicate};
-
 
 pub struct BeebURL<'a> {
     url: &'a str,
 }
 
 impl<'a> BeebURL<'a> {
-    // async fn load_async(&self) -> BoxResult<IplayerDocument<'a>> {
-    //     let client = Client::new();
-    //     let rb = client.get(self.url);
-    //     let resp = rb.send().and_then(|res| select::document::Document::from_read(res));
-    //     Ok(IplayerDocument {
-    //         doc: resp,
-    //         url: self.urli,
-    //     })
-    // }
+     async fn load_async(&self) -> BoxResult<IplayerDocument<'a>> {
+         let client = Client::new();
+         let url = self.url.parse()?;
+         let body = client.get(url).await?.into_body();
+         let doc = select::document::Document::from_read(rb)?;
+         Ok(IplayerDocument {
+             doc: doc,
+             url: self.url,
+         })
+     }
 }
 
 pub trait DocumentLoader {
@@ -36,7 +35,7 @@ pub trait NextPager {
     fn programme_pages(&self, _: Vec<IplayerSelection>) -> Vec<Box<dyn DocumentLoader>>;
 }
 
-pub type Error = Box<dyn error::Error + Send + Sync + 'static>;
+pub type Error = Box<dyn error::Error + Send + Sync>;
 
 type BoxResult<T> = Result<T, Error>;
 
@@ -289,7 +288,8 @@ impl<'a> ProgrammePage<'a> {
             .map(move |node| ProgrammePage::programme(title.clone(), node.next()))
             .collect()
     }
-    fn programme(title: Option<String>, node: Option<Node>) -> Option<Programme> {
+
+    fn programme(title: Option<String>, node: Option<select::node::Node>) -> Option<Programme> {
         match node {
             None => None,
             Some(nod) => {
@@ -315,10 +315,10 @@ impl<'a> BeebURL<'a> {
         Ok(IplayerDocument { doc, url: self.url })
     }
 
-//    async fn load_async(&self) -> BoxResult<IplayerDocument<'a>> {
-//        let uri = url::Url::parse(self.url)?;
-//
-//    }
+    //    async fn load_async(&self) -> BoxResult<IplayerDocument<'a>> {
+    //        let uri = url::Url::parse(self.url)?;
+    //
+    //    }
 
     // async fn load_async(&self) -> BoxResult<IplayerDocument<'a>> {
 
@@ -348,18 +348,18 @@ mod testutils {
     }
 }
 
-async fn collect_pages<'a>(urls: Vec<BeebURL<'_>>) -> Vec<BoxResult<IplayerDocument<'a>>> {
-    let mut idocs: Vec<BoxResult<IplayerDocument>> = Vec::new();
-    thread::scope(|s| {
-        for url in &urls {
-            s.spawn(move |_| {
-                idocs.push(url.load())
-            });
-        }
-    }).unwrap();
-
-    idocs
-}
+//async fn collect_pages<'a>(urls: Vec<BeebURL<'_>>) -> Vec<BoxResult<IplayerDocument<'a>>> {
+//    let mut idocs: Vec<BoxResult<IplayerDocument>> = Vec::new();
+//    thread::scope(|s| {
+//        for url in &urls {
+//            s.spawn(move |_| {
+//                idocs.push(url.load())
+//            });
+//        }
+//    }).unwrap();
+//
+//    idocs
+//}
 
 #[cfg(test)]
 mod tests {

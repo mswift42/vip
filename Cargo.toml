@@ -7,7 +7,7 @@ edition = "2018"
 [dependencies]
 select = "0.4.3"
 url = "1.7.1"
-reqwest = "0.9.19"
+reqwest = "0.10.0-alpha.1"
 chashmap = "2.2.0"
 crossbeam = "0.7.2"
 hyper = { git = "https://github.com/hyperium/hyper" }

@@ -2,8 +2,7 @@ use std::error;
 use std::fs;
 
 use crossbeam::thread;
-use futures::{Future, Stream};
-use hyper::{Body, Client, Request, Response, Uri };
+use futures::{Future, Stream, TryFutureExt};
 use select::document::Document;
 use select::document::Find;
 use select::predicate::{Class, Name, Predicate};
@@ -13,15 +12,9 @@ pub struct BeebURL<'a> {
 }
 
 impl<'a> BeebURL<'a> {
-     async fn load_async(&self) -> BoxResult<IplayerDocument<'a>> {
-         let client = Client::new();
-         let url = self.url.parse()?;
-         let body = client.get(url).await?.into_body();
-         let doc = select::document::Document::from_read(rb)?;
-         Ok(IplayerDocument {
-             doc: doc,
-             url: self.url,
-         })
+     async fn load_async(&self) -> () Future {
+         let a : () = reqwest::get(self.url);
+        a
      }
 }
 
@@ -308,9 +301,9 @@ struct MainCategoryDocument<'a> {
 }
 
 impl<'a> BeebURL<'a> {
-    fn load(&self) -> BoxResult<IplayerDocument<'a>> {
-        let uri = url::Url::parse(self.url)?;
-        let resp = reqwest::get(uri)?;
+    async fn load(&self) -> BoxResult<IplayerDocument<'a>> {
+        let resp = reqwest::get(self.url)
+            .await?.text().await?;
         let doc = select::document::Document::from_read(resp)?;
         Ok(IplayerDocument { doc, url: self.url })
     }

@@ -3,6 +3,7 @@ use std::fs;
 
 use crossbeam::thread;
 use futures::{Future, Stream, TryFutureExt};
+use reqwest::Response;
 use select::document::Document;
 use select::document::Find;
 use select::predicate::{Class, Name, Predicate};
@@ -11,12 +12,6 @@ pub struct BeebURL<'a> {
     url: &'a str,
 }
 
-impl<'a> BeebURL<'a> {
-     async fn load_async(&self) -> () Future {
-         let a : () = reqwest::get(self.url);
-        a
-     }
-}
 
 pub trait DocumentLoader {
     fn load(&self) -> BoxResult<IplayerDocument>;
@@ -303,7 +298,9 @@ struct MainCategoryDocument<'a> {
 impl<'a> BeebURL<'a> {
     async fn load(&self) -> BoxResult<IplayerDocument<'a>> {
         let resp = reqwest::get(self.url)
-            .await?.text().await?;
+            .await?
+            .bytes()
+            .await?;
         let doc = select::document::Document::from_read(resp)?;
         Ok(IplayerDocument { doc, url: self.url })
     }

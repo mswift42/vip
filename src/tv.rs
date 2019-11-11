@@ -299,9 +299,9 @@ impl<'a> BeebURL<'a> {
     async fn load(&self) -> BoxResult<IplayerDocument<'a>> {
         let resp = reqwest::get(self.url)
             .await?
-            .bytes()
+            .text()
             .await?;
-        let doc = select::document::Document::from_read(resp)?;
+        let doc = select::document::Document::from_read(resp.as_bytes())?;
         Ok(IplayerDocument { doc, url: self.url })
     }
 

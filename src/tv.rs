@@ -305,14 +305,6 @@ impl<'a> BeebURL<'a> {
         Ok(IplayerDocument { doc, url: self.url })
     }
 
-    //    async fn load_async(&self) -> BoxResult<IplayerDocument<'a>> {
-    //        let uri = url::Url::parse(self.url)?;
-    //
-    //    }
-
-    // async fn load_async(&self) -> BoxResult<IplayerDocument<'a>> {
-
-    // }
 }
 
 fn programme_sites<'a>(nodes: Find<'a, Class<&str>>) -> Vec<IplayerNode<'a>> {
@@ -350,6 +342,18 @@ mod testutils {
 //
 //    idocs
 //}
+
+async fn collect_pages<'a>(urls: Vec<BeebURL<'_>>) -> Vec<IplayerDocument<'a>> {
+    let mut idocs: Vec<IplayerDocument> = Vec::new();
+    for url in &urls {
+        let ires = url.load();
+        let doc = ires.await;
+        if doc.is_ok() {
+            idocs.push(doc)
+        }
+    }
+    idocs
+}
 
 #[cfg(test)]
 mod tests {

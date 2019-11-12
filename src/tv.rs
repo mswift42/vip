@@ -343,13 +343,13 @@ mod testutils {
 //    idocs
 //}
 
-async fn collect_pages<'a>(urls: Vec<BeebURL<'_>>) -> Vec<IplayerDocument<'a>> {
+async fn collect_pages<'a>(urls: Vec<BeebURL<'a>>) -> Vec<IplayerDocument<'a>> {
     let mut idocs: Vec<IplayerDocument> = Vec::new();
     for url in &urls {
         let ires = url.load();
         let doc = ires.await;
         if doc.is_ok() {
-            idocs.push(doc)
+            idocs.push(doc.unwrap())
         }
     }
     idocs

@@ -9,9 +9,8 @@ use select::document::Find;
 use select::predicate::{Class, Name, Predicate};
 
 pub struct BeebURL<'a> {
-    url: &'a str,
+    pub url: &'a str,
 }
-
 
 pub trait DocumentLoader {
     fn load(&self) -> BoxResult<IplayerDocument>;
@@ -297,14 +296,10 @@ struct MainCategoryDocument<'a> {
 
 impl<'a> BeebURL<'a> {
     async fn load(&self) -> BoxResult<IplayerDocument<'a>> {
-        let resp = reqwest::get(self.url)
-            .await?
-            .text()
-            .await?;
+        let resp = reqwest::get(self.url).await?.text().await?;
         let doc = select::document::Document::from_read(resp.as_bytes())?;
         Ok(IplayerDocument { doc, url: self.url })
     }
-
 }
 
 fn programme_sites<'a>(nodes: Find<'a, Class<&str>>) -> Vec<IplayerNode<'a>> {
@@ -330,20 +325,7 @@ mod testutils {
     }
 }
 
-//async fn collect_pages<'a>(urls: Vec<BeebURL<'_>>) -> Vec<BoxResult<IplayerDocument<'a>>> {
-//    let mut idocs: Vec<BoxResult<IplayerDocument>> = Vec::new();
-//    thread::scope(|s| {
-//        for url in &urls {
-//            s.spawn(move |_| {
-//                idocs.push(url.load())
-//            });
-//        }
-//    }).unwrap();
-//
-//    idocs
-//}
-
-async fn collect_pages<'a>(urls: Vec<BeebURL<'a>>) -> Vec<IplayerDocument<'a>> {
+pub async fn collect_pages<'a>(urls: Vec<BeebURL<'a>>) -> Vec<IplayerDocument<'a>> {
     let mut idocs: Vec<IplayerDocument> = Vec::new();
     for url in &urls {
         let ires = url.load();

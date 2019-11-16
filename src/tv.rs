@@ -55,14 +55,12 @@ impl IplayerDocument<'_> {
             .collect()
     }
 
-    fn programme_pages(self, selections: Vec<IplayerSelection>) -> Vec<Box<BeebURL>> {
+    fn programme_pages(self, selections: Vec<IplayerSelection>) -> Vec<BeebURL<'_>> {
         selections
             .iter()
             .filter(|sel| sel.programme_page_url.is_some())
-            .map(|opturl| {
-                Box::new(BeebURL {
-                    url: opturl.programme_page_url.unwrap(),
-                })
+            .map(|opturl| BeebURL {
+                url: opturl.programme_page_url.unwrap(),
             })
             .collect()
     }
@@ -71,12 +69,12 @@ impl IplayerDocument<'_> {
         self.doc.find(Class("series-nav")).next().is_some()
     }
 
-    fn series_urls(&self) -> Vec<Box<BeebURL>> {
+    fn series_urls(&self) -> Vec<BeebURL<'_>> {
         let urls = self
             .doc
             .find(Name("a").and(Class("series-nav__button")))
             .filter_map(|n| n.attr("href"));
-        urls.map(|u| Box::new(BeebURL { url: u })).collect()
+        urls.map(|u| BeebURL { url: u }).collect()
     }
 }
 

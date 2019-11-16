@@ -89,7 +89,6 @@ impl IplayerDocument<'_> {
     fn iplayer_selections(&self) -> Vec<IplayerSelection> {
         self.doc
             .find(Class("content-item"))
-            .into_iter()
             .map(|node| IplayerSelection::new(IplayerNode { node }))
             .collect::<Vec<IplayerSelection>>()
     }

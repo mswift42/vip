@@ -8,6 +8,7 @@ use select::document::Document;
 use select::document::Find;
 use select::predicate::{Class, Name, Predicate};
 
+#[derive(Debug)]
 pub struct BeebURL<'a> {
     pub url: &'a str,
 }
@@ -47,10 +48,10 @@ impl IplayerDocument<'_> {
         self
     }
 
-    fn next_pages(&self) -> Vec<Box<BeebURL>> {
+    fn next_pages(&self) -> Vec<BeebURL<'_>> {
         np_page_options(self)
             .iter()
-            .map(|url| Box::new(BeebURL { url }))
+            .map(|url| BeebURL { url })
             .collect()
     }
 
@@ -96,7 +97,7 @@ impl IplayerDocument<'_> {
     }
 }
 
-static BBCPREFIX: &'static str = "https://bbc.co.uk";
+static BBCPREFIX: &str = "https://bbc.co.uk";
 
 struct ProgrammePage<'a> {
     idoc: IplayerDocument<'a>,

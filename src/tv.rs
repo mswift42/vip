@@ -327,9 +327,8 @@ pub async fn collect_pages<'a>(urls: Vec<BeebURL<'a>>) -> Vec<IplayerDocument<'a
     let mut idocs: Vec<IplayerDocument> = Vec::new();
     for url in &urls {
         let ires = url.load();
-        let doc = ires.await;
-        if doc.is_ok() {
-            idocs.push(doc.unwrap())
+        if let Ok(doc) = ires.await{  
+            idocs.push(doc)
         }
     }
     idocs

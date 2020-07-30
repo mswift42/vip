@@ -1,9 +1,9 @@
 use std::error;
 use std::fs;
 
-use crossbeam::thread;
-use futures::{Future, Stream, TryFutureExt};
-use reqwest::Response;
+
+
+
 use select::document::Document;
 use select::document::Find;
 use select::predicate::{Class, Name, Predicate};
